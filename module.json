@@ -2,16 +2,22 @@
   "id": "jack-small-details",
   "title": "Jack Small Details",
   "description": "A personal collection of small quality-of-life improvements for Foundry VTT.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "authors": [
-    { "name": "Jack" }
+    {
+      "name": "Jack"
+    }
   ],
   "compatibility": {
     "minimum": 14,
     "verified": 14
   },
-  "esmodules": ["scripts/main.mjs"],
-  "styles": ["styles/jack-small-details.css"],
+  "esmodules": [
+    "scripts/main.mjs"
+  ],
+  "styles": [
+    "styles/jack-small-details.css"
+  ],
   "languages": [
     {
       "lang": "en",

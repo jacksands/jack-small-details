@@ -13,12 +13,14 @@
 
 import { DarknessSliderFeature } from "./features/darkness-slider.mjs";
 import { SceneDefaultsFeature   } from "./features/scene-defaults.mjs";
+import { BackgroundVolumeFeature } from "./features/background-volume.mjs";
 
 // ─── Feature registry ─────────────────────────────────────────────────────────
 // Add new features here. Order = order in the Settings page.
 const FEATURES = [
   DarknessSliderFeature,
   SceneDefaultsFeature,
+  BackgroundVolumeFeature,
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 
