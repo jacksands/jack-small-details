@@ -1,0 +1,23 @@
+{
+  "JSD.Settings.DarknessSlider.Label": "Darkness Slider",
+  "JSD.Settings.DarknessSlider.Hint": "Show a quick darkness level slider in the Lighting layer controls, so you can adjust scene darkness without opening the scene config.",
+  "JSD.Settings.DarknessSlider.Mode.Label": "Darkness Slider — Update Mode",
+  "JSD.Settings.DarknessSlider.Mode.Hint": "Controls when the darkness change is applied to the scene. Real-time updates on every drag move; On Apply only saves when you click the Apply button.",
+  "JSD.Settings.DarknessSlider.Mode.Realtime": "Real-time (updates as you drag)",
+  "JSD.Settings.DarknessSlider.Mode.Apply": "On Apply (updates when you click Apply)",
+
+  "JSD.DarknessPanel.Title": "Darkness Level",
+  "JSD.DarknessPanel.NoScene": "No active scene",
+  "JSD.DarknessPanel.Apply": "Apply",
+  "JSD.DarknessPanel.Cancel": "Cancel",
+
+  "JSD.Settings.SceneDefaults.Label": "Apply Scene Defaults to New Scenes",
+  "JSD.Settings.SceneDefaults.Hint": "When enabled, new scenes are created with the values defined in your Scene Defaults configuration. Imported scenes (adventure packs, compendiums) are not affected.",
+  "JSD.Settings.SceneDefaults.Menu.Name": "Scene Defaults",
+  "JSD.Settings.SceneDefaults.Menu.Label": "Configure Scene Defaults",
+  "JSD.Settings.SceneDefaults.Menu.Hint": "Open the Scene configuration editor to define default values applied to every new scene you create.",
+
+  "JSD.SceneDefaults.WindowTitle": "Scene Defaults — Jack Small Details",
+  "JSD.SceneDefaults.TemplateName": "(Defaults Template)",
+  "JSD.SceneDefaults.Saved": "Scene defaults saved! New scenes will use these settings."
+}

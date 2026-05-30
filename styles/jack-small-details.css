@@ -1,0 +1,108 @@
+/* Jack Small Details — all selectors scoped to #jsd-darkness-panel */
+
+@keyframes jsd-slide-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+#jsd-darkness-panel {
+  animation: jsd-slide-in 0.14s ease-out;
+  background: linear-gradient(150deg, #1e1812 0%, #261e14 100%);
+  border: 2px solid #4a3a28;
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.65), 0 0 0 1px rgba(212,165,116,0.18);
+  color: #f5e6d3;
+  font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+  font-size: 13px;
+  min-width: 270px;
+  overflow: hidden;
+  position: fixed;
+  z-index: 300;
+}
+
+#jsd-darkness-panel .jsd-panel-header {
+  align-items: center;
+  background: linear-gradient(135deg, #3a2510, #2a1a08);
+  border-bottom: 2px solid #d4a574;
+  display: flex;
+  gap: 7px;
+  padding: 9px 12px 9px 14px;
+}
+#jsd-darkness-panel .jsd-panel-header > i { color: #d4a574; font-size: 13px; flex-shrink: 0; }
+#jsd-darkness-panel .jsd-panel-title {
+  color: #f5d9a8; font-size: 11px; font-weight: 800;
+  letter-spacing: 1.8px; text-transform: uppercase; white-space: nowrap;
+}
+#jsd-darkness-panel .jsd-scene-name {
+  color: #c9a876; flex: 1; font-size: 11px; min-width: 0;
+  overflow: hidden; text-align: right; text-overflow: ellipsis; white-space: nowrap;
+}
+#jsd-darkness-panel .jsd-close-btn {
+  background: none; border: none; border-radius: 5px; color: #7a6040;
+  cursor: pointer; flex-shrink: 0; font-size: 12px; line-height: 1; padding: 3px 5px;
+  transition: background 0.12s, color 0.12s;
+}
+#jsd-darkness-panel .jsd-close-btn:hover { background: rgba(212,165,116,0.2); color: #f5d9a8; }
+
+#jsd-darkness-panel .jsd-panel-body {
+  display: flex; flex-direction: column; gap: 10px; padding: 14px 14px 12px;
+}
+#jsd-darkness-panel .jsd-slider-row { align-items: center; display: flex; gap: 8px; }
+
+#jsd-darkness-panel .jsd-slider {
+  accent-color: #d4a574; cursor: pointer; flex: 1; height: 4px; -webkit-appearance: none;
+}
+#jsd-darkness-panel .jsd-slider::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, #d4a574, #3a2a1a); border-radius: 2px; height: 4px;
+}
+#jsd-darkness-panel .jsd-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; background: #d4a574; border: 2px solid #1e1812;
+  border-radius: 50%; box-shadow: 0 0 0 1px #d4a574; height: 16px; margin-top: -6px;
+  transition: box-shadow 0.12s; width: 16px;
+}
+#jsd-darkness-panel .jsd-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 3px rgba(212,165,116,0.4);
+}
+#jsd-darkness-panel .jsd-slider::-moz-range-track {
+  background: linear-gradient(90deg, #d4a574, #3a2a1a); border-radius: 2px; height: 4px;
+}
+#jsd-darkness-panel .jsd-slider::-moz-range-thumb {
+  background: #d4a574; border: 2px solid #1e1812; border-radius: 50%; height: 12px; width: 12px;
+}
+
+#jsd-darkness-panel .jsd-value-input {
+  background: #2a1e12; border: 1px solid #5a3a20; border-radius: 6px; color: #f5e6d3;
+  font-size: 12px; font-weight: 700; padding: 4px 6px; text-align: center; width: 58px;
+  transition: border-color 0.12s;
+}
+#jsd-darkness-panel .jsd-value-input:focus { border-color: #d4a574; outline: none; }
+#jsd-darkness-panel .jsd-value-input::-webkit-outer-spin-button,
+#jsd-darkness-panel .jsd-value-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+#jsd-darkness-panel .jsd-value-input[type=number] { -moz-appearance: textfield; }
+
+#jsd-darkness-panel .jsd-darkness-bar {
+  background: #2a243a; border: 1px solid #3a3050; border-radius: 6px; height: 10px; overflow: hidden;
+}
+#jsd-darkness-panel .jsd-darkness-fill {
+  background: linear-gradient(90deg, #180c28 0%, #0a0416 100%);
+  border-radius: 6px; height: 100%; transition: width 0.08s ease;
+}
+
+#jsd-darkness-panel .jsd-panel-footer { display: flex; gap: 8px; padding-top: 2px; }
+#jsd-darkness-panel .jsd-btn {
+  border: none; border-radius: 6px; cursor: pointer; flex: 1;
+  font-size: 12px; font-weight: 800; letter-spacing: 0.4px; padding: 7px 10px; transition: all 0.12s;
+}
+#jsd-darkness-panel .jsd-btn-apply {
+  background: linear-gradient(135deg, #d4a574, #c99456);
+  box-shadow: 0 2px 6px rgba(212,165,116,0.35); color: #1a1410;
+}
+#jsd-darkness-panel .jsd-btn-apply:hover {
+  background: linear-gradient(135deg, #e8c090, #d4a574);
+  box-shadow: 0 3px 10px rgba(212,165,116,0.5); transform: translateY(-1px);
+}
+#jsd-darkness-panel .jsd-btn-apply:active { transform: translateY(0); }
+#jsd-darkness-panel .jsd-btn-cancel {
+  background: #2a1e12; border: 1px solid #5a3a20; color: #c9a876;
+}
+#jsd-darkness-panel .jsd-btn-cancel:hover { background: #3a2a1a; color: #f5d9a8; }
