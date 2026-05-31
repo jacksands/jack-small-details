@@ -14,6 +14,7 @@
 import { DarknessSliderFeature } from "./features/darkness-slider.mjs";
 import { SceneDefaultsFeature   } from "./features/scene-defaults.mjs";
 import { BackgroundVolumeFeature } from "./features/background-volume.mjs";
+import { InstructionsViewer     } from "./apps/InstructionsViewer.mjs";
 
 // ─── Feature registry ─────────────────────────────────────────────────────────
 // Add new features here. Order = order in the Settings page.
@@ -24,8 +25,20 @@ const FEATURES = [
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 
+const MODULE = "jack-small-details";
+
 Hooks.once("init", () => {
   for (const Feature of FEATURES) Feature.registerSettings?.();
+
+  game.settings.registerMenu(MODULE, "instructions", {
+    name: "Instructions",
+    label: "Open Instructions",
+    hint: "View the usage guide for all features included in this module.",
+    icon: "fa-solid fa-book",
+    type: InstructionsViewer,
+    restricted: false,
+  });
+
   console.log("Jack Small Details | Initialized.");
 });
 
