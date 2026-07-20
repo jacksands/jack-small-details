@@ -85,6 +85,15 @@ export class DarknessPanel extends ApplicationV2 {
 
   async _onRender(_context, _options) {
     const el = this.element;
+
+    // Defensive: if _onRender were ever called again on this same
+    // instance without an intervening close (not expected given how the
+    // panel is opened/closed today — see darkness-slider.mjs — but cheap
+    // to guard against), abort the PREVIOUS controller first. Otherwise
+    // its listeners — including the global `document` mousedown listener
+    // below — would be silently orphaned rather than removed, since only
+    // the newest controller reference would be kept.
+    this.#abortController?.abort();
     this.#abortController = new AbortController();
     const { signal } = this.#abortController;
 

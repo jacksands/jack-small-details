@@ -11,6 +11,15 @@ const SETTING_UPDATE_MODE = "darknessSlider.updateMode";
 
 export const DarknessSliderFeature = {
 
+  // Used by SettingsDividers.mjs to draw a header + group this feature's
+  // rows together on the Settings page. `keys` are the settings/menu keys
+  // (without the "jack-small-details." module prefix) belonging to this
+  // feature, listed in the order they should appear — enabled toggle first.
+  settingsGroup: {
+    label: "JSD.Settings.DarknessSlider.Label",
+    keys: [SETTING_ENABLED, SETTING_UPDATE_MODE],
+  },
+
   isEnabled() {
     try { return game.settings.get(MODULE, SETTING_ENABLED); } catch { return true; }
   },

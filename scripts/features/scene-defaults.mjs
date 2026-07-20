@@ -95,6 +95,12 @@ class SceneDefaultsMenuRelay extends foundry.applications.api.ApplicationV2 {
 
 // ── Feature Export ───────────────────────────────────────────────────────────
 export const SceneDefaultsFeature = {
+
+  settingsGroup: {
+    label: "JSD.Settings.SceneDefaults.Menu.Name",
+    keys: [SETTING_ENABLED, "sceneDefaultsMenu"],
+  },
+
   isEnabled() {
     try { return game.settings.get(MODULE, SETTING_ENABLED); } catch { return true; }
   },

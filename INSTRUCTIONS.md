@@ -9,6 +9,10 @@ A personal collection of small quality-of-life improvements for Foundry VTT V14.
 - [Darkness Slider](#darkness-slider)
 - [Scene Defaults](#scene-defaults)
 - [Background Volume Slider](#background-volume-slider)
+- [Journal Scaler](#journal-scaler)
+- [Module Filter](#module-filter)
+- [GM Clear Vision](#gm-clear-vision)
+- [Fix Blank Line Spacing](#fix-blank-line-spacing)
 
 ---
 
@@ -119,6 +123,114 @@ So if the global Ambient volume is at 50% and the scene volume is set to 0.8, th
 - The volume value is stored as a **flag** on the scene document (`jack-small-details.backgroundVolume`), so it persists across sessions without affecting the core scene data.
 - The slider applies to **all video Levels** of the scene simultaneously.
 - Volume automatically re-applies whenever you switch to a scene or change the global Ambient Volume slider.
+
+---
+
+## Journal Scaler
+
+Scale journal text and images without leaving the journal window.
+
+### Controls
+
+- **CTRL + Mouse Wheel** — scale the journal text up or down.
+- **CTRL + SHIFT + Mouse Wheel** — also scale images (only needed if "Always scale images" is disabled below).
+- **SHIFT + =** (rebindable in **Configure Controls**) — reset the journal page currently under your cursor back to 100% text and image scale.
+
+While scaling, a small badge briefly appears in the corner of the journal window showing the current percentage (e.g. `120%`, or `Text 120% · Image 100%` if they differ).
+
+### Settings
+
+| Setting | Description |
+|---------|-------------|
+| **Journal Scaler** | Enable or disable the feature entirely, for yourself. Requires reload. |
+| **Always scale images** | When enabled, images scale together with text on every CTRL + Wheel action. When disabled, hold SHIFT as well to scale images. Turning this off immediately resets any already-enlarged images in your currently open journals back to 100% (text scale is not affected). |
+| **Reset All** | Erases the saved scale for every journal page you have ever resized, including pages that are not currently open. Asks for confirmation first. This cannot be undone. |
+
+### Remembering your scale
+
+Your text and image scale is remembered **per journal page**, per browser. It is a personal reading preference — it is **not** shared with other players, and reopening a page later restores the last scale you set for it there. Scaling one page does not affect other pages in the same journal entry.
+
+### Compatibility
+
+- Works with core Foundry journal sheets, including entries with multiple pages open/scrolled at once.
+- Works with Monk's Enhanced Journal, if installed.
+
+### Notes
+
+- Every setting here is **per-player** (`scope: "client"`), including the on/off toggle — this feature has no effect on other players and each player can enable or disable it independently.
+- The SHIFT + = reset only affects the specific page under your mouse cursor at the moment you press it, not the whole journal or all open journals.
+- If a specific page's scale still seems to affect a different page in the same journal entry, please report it — this relies on detecting a page identifier from the page's rendered HTML that could not be fully confirmed from Foundry's API documentation.
+
+---
+
+## Module Filter
+
+Adds a second search field just below Foundry's native Settings search box, in the sidebar module list.
+
+- The **native** search box (top) searches setting names/hints and highlights matching modules — it never hides anything from the list, and this feature does not change that behavior at all.
+- The **new** search field (right below it) does the opposite on purpose: typing hides every module in the sidebar list whose name doesn't contain what you typed. It ignores settings content entirely — it only looks at the module's name.
+
+Example: typing `jack` in the new field leaves only **Jack Small Details** visible in the list; everything else (Core, system, other modules) is hidden until you clear the field.
+
+The typed text is not remembered — it's always empty again the next time you open Settings.
+
+### Settings
+
+| Setting | Description |
+|---------|-------------|
+| **Module Filter** | Enable or disable this second search field, for yourself. Requires reload. |
+
+---
+
+## GM Clear Vision
+
+Adds an eye icon to the **Token Tools** toolbar (left sidebar, arrow icon) that lets the GM see hidden/undetected tokens and darken/brighten unexplored fog of war — without revealing anything to players.
+
+### How to use
+
+1. Click the **eye icon** in Token Tools (outline eye = off) or press **Ctrl + G**.
+2. While active, the icon turns **solid and green**, and the darkness/fog of the scene is brightened for you (players see no change).
+3. Click again or press **Ctrl + G** to turn it off.
+
+The dashed outline shown over hidden/undetected tokens is a **separate, independent effect** — see the "Hidden Token Outline" setting below for how to control when it appears.
+
+### Requirements
+
+- Requires the **lib-wrapper** module to be installed and active. Without it, GM Clear Vision silently disables itself for the session (a warning is logged to the console) — it will not crash the module or affect other features.
+
+### Notes
+
+- **GM only.** The entire feature — hooks, icon, and CONFIG patches — is only ever registered when the current user is a GM. A player's client never runs any of this code, regardless of the toggle state.
+- The eye icon's own on/off state is personal (per browser), so each GM client remembers its own state independently.
+- Does not persist anything to any document — purely a local rendering overlay.
+
+### Settings
+
+| Setting | Description |
+|---------|-------------|
+| **GM Clear Vision** | Master on/off for the entire feature (icon, keybinding, and all effects). Requires reload. |
+| **GM Clear Vision — Hidden Token Outline** | Controls when the dashed outline over hidden/undetected tokens appears, independently of the eye icon's darkness/fog effect: <br>• **Always on** (default) — shown whenever the feature is enabled, regardless of the eye icon. <br>• **Only while the eye icon is active** — tied to the same toggle as the darkness/fog brightening. <br>• **Always off** — never shown. |
+
+---
+
+## Fix Blank Line Spacing
+
+By default, Foundry collapses multiple blank lines you type in a journal/sheet/chat editor down to zero visible space once saved — three empty Enter presses between two paragraphs end up looking like no gap at all. This feature gives each blank line real height so what you typed is what you see.
+
+- Applies to journal entry pages, Actor/Item sheet description fields, and chat message content.
+- The number of blank lines you type is preserved proportionally — 3 blank lines stay visually bigger than 1, they aren't collapsed into one fixed-size gap.
+- Purely visual: nothing about your saved document content changes, ever.
+
+### Settings
+
+| Setting | Description |
+|---------|-------------|
+| **Fix Blank Line Spacing** | Enable or disable this feature. **World setting** — the GM sets it once and it applies identically for every connected user, live, no reload needed. |
+
+### Known limitations
+
+- If a specific sheet or chat card still collapses blank lines, its content container may use a class name other than `.editor-content` / `.message-content` — inspect it in devtools and report the actual class so the CSS selector can be added.
+- Exporting journal content outside of Foundry (e.g. a PDF export macro) will only preserve this spacing if the exporting tool also has this module's CSS loaded in the same browser context.
 
 ---
 

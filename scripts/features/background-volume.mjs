@@ -30,6 +30,22 @@ function updateBackgroundVolume() {
   updateVolume(ambient * getVolume(scene));
 }
 
+// Background video textures sometimes finish loading a moment AFTER
+// "canvasReady" fires (confirmed pattern with Foundry's video texture
+// loader), so `canvas.primary.videoMeshes` can still be empty at that
+// exact instant — a single call right then can silently find nothing to
+// mute. Retrying a few times over the following seconds catches the
+// video once it actually attaches, without needing to guess at a more
+// specific "video loaded" hook. Cheap and idempotent — each retry just
+// re-applies the same target volume to whatever meshes currently exist.
+const VOLUME_RETRY_DELAYS_MS = [0, 200, 500, 1000, 2000, 4000];
+
+function scheduleBackgroundVolumeUpdate() {
+  for (const delay of VOLUME_RETRY_DELAYS_MS) {
+    setTimeout(updateBackgroundVolume, delay);
+  }
+}
+
 function findInsertionTarget(rootEl) {
   return (
     rootEl.querySelector("div.tab[data-tab='misc']") ||
@@ -42,6 +58,12 @@ function findInsertionTarget(rootEl) {
 }
 
 export const BackgroundVolumeFeature = {
+
+  settingsGroup: {
+    label: "Background Volume Slider",
+    keys: [SETTING_ENABLED],
+  },
+
   isEnabled() {
     try { return game.settings.get(MODULE, SETTING_ENABLED); } catch { return true; }
   },
@@ -55,12 +77,15 @@ export const BackgroundVolumeFeature = {
   },
 
   initialize() {
-    updateBackgroundVolume();
-    Hooks.on("canvasReady", updateBackgroundVolume);
+    scheduleBackgroundVolumeUpdate();
+    Hooks.on("canvasReady", scheduleBackgroundVolumeUpdate);
     Hooks.on("globalAmbientVolumeChanged", updateBackgroundVolume);
-    Hooks.on("updateDocument", (document) => {
-      if (!(document instanceof Scene)) return;
-      if (game.scenes.viewed?.id === document.id) updateBackgroundVolume();
+
+    // Narrower than "updateDocument" (which fires for every document type
+    // in the world, on every update) — "updateScene" only fires for Scene
+    // updates, which is all this ever needed to react to.
+    Hooks.on("updateScene", (scene) => {
+      if (game.scenes.viewed?.id === scene.id) updateBackgroundVolume();
     });
 
     Hooks.on("renderSceneConfig", async (sceneConfig, element) => {

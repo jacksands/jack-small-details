@@ -19,5 +19,39 @@
 
   "JSD.SceneDefaults.WindowTitle": "Scene Defaults — Jack Small Details",
   "JSD.SceneDefaults.TemplateName": "(Defaults Template)",
-  "JSD.SceneDefaults.Saved": "Scene defaults saved! New scenes will use these settings."
+  "JSD.SceneDefaults.Saved": "Scene defaults saved! New scenes will use these settings.",
+
+  "JSD.Settings.JournalScaler.Label": "Journal Scaler",
+  "JSD.Settings.JournalScaler.Hint": "Enable or disable the journal text/image scaling feature (CTRL + Mouse Wheel) for yourself. This is a personal reading preference and does not affect other players. Requires reload.",
+
+  "JOURNALSCALER.Settings.ScaleImages.Name": "Always scale images",
+  "JOURNALSCALER.Settings.ScaleImages.Hint": "Whether to ALWAYS scale images together with the text. If disabled, hold CTRL + SHIFT while using the mouse wheel to scale images. Turning this off resets any already-enlarged images in open journals back to 100%.",
+  "JOURNALSCALER.Settings.ResetAll.Name": "Reset All Scales",
+  "JOURNALSCALER.Settings.ResetAll.Label": "Reset All",
+  "JOURNALSCALER.Settings.ResetAll.Hint": "Erase all saved text/image scale history for every journal page, including ones not currently open. This cannot be undone.",
+  "JOURNALSCALER.Settings.ResetAll.Confirm": "This will erase the saved scale for every journal page you've ever resized, including pages that are not currently open. This cannot be undone. Continue?",
+  "JOURNALSCALER.Settings.ResetAll.Done": "Journal Scaler: all saved scales have been reset.",
+  "JOURNALSCALER.Keybindings.ResetScale.Name": "Reset Journal Scale",
+  "JOURNALSCALER.Keybindings.ResetScale.Hint": "Resets the text and image scale of the journal currently under your cursor back to 100%.",
+  "JOURNALSCALER.Indicator.Single": "{value}%",
+  "JOURNALSCALER.Indicator.Split": "Text {text}% · Image {image}%",
+
+  "JSD.Settings.ModuleFilter.Label": "Module Filter",
+  "JSD.Settings.ModuleFilter.Hint": "Adds a second search field below Foundry's native Settings search, letting you filter the module list in the sidebar by name only (e.g. typing \"jack\" hides every module except this one). Does not change the native search's own behavior. Requires reload.",
+  "JSD.ModuleFilter.Placeholder": "Filter modules by name…",
+
+  "JSD.Settings.GMVision.Label": "GM Clear Vision",
+  "JSD.Settings.GMVision.Hint": "Master on/off for the whole GM Clear Vision feature — the Token Tools icon, the Ctrl+G keybinding, and all of its effects (hidden-token outline, darkness/fog brightening). Turning this off removes the icon entirely, not just its ability to be toggled. Requires the 'lib-wrapper' module to be installed and active. Requires reload.",
+  "JSD.GMVision.ToolTitle": "Toggle GM Clear Vision",
+  "JSD.GMVision.Keybinding.Name": "Toggle GM Clear Vision",
+  "JSD.GMVision.Keybinding.Hint": "Toggles GM Clear Vision's darkness/fog brightening on/off. GM only; has no effect for players.",
+
+  "JSD.Settings.GMVision.RevealMode.Label": "GM Clear Vision — Hidden Token Outline",
+  "JSD.Settings.GMVision.RevealMode.Hint": "Controls the dashed outline shown over hidden/undetected tokens (only visible to the GM). This is independent from the darkness/fog brightening, which always follows the eye icon.",
+  "JSD.GMVision.RevealMode.Always": "Always on (while GM Clear Vision is enabled)",
+  "JSD.GMVision.RevealMode.Linked": "Only while the eye icon is active",
+  "JSD.GMVision.RevealMode.Off": "Always off",
+
+  "JSD.Settings.TextSpacingFix.Label": "Fix Blank Line Spacing",
+  "JSD.Settings.TextSpacingFix.Hint": "Preserves visible blank lines in journals, sheet descriptions, and chat messages, instead of Foundry's default of collapsing them to zero height. World setting — applies the same for every connected user. No reload needed."
 }

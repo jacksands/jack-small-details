@@ -181,3 +181,103 @@
 #jsd-instructions-body tr:nth-child(even) td { background: #1e1812; }
 
 #jsd-instructions-body strong { color: #f5d9a8; }
+
+/* ── Settings page — feature group dividers (SettingsDividers.mjs) ── */
+
+.jsd-settings-divider {
+  margin: 20px 0 4px;
+}
+
+.jsd-settings-divider:first-child {
+  margin-top: 4px;
+}
+
+.jsd-settings-divider hr {
+  border: none;
+  border-top: 1px solid #4a3a28;
+  margin: 0 0 8px;
+}
+
+.jsd-settings-divider h3 {
+  margin: 0 0 2px;
+  color: #d4a574;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── Settings sidebar — secondary module-name filter (module-filter.mjs) ──
+   The native search field is styled by Foundry via a specific selector
+   (likely its id), not just the <search> tag, so our own field can't
+   safely rely on inheriting it — some other cascade rule was leaking in
+   (huge uppercase text). Reset first, then style explicitly. */
+.jsd-module-filter {
+  margin-top: 6px;
+}
+
+.jsd-module-filter input[type="search"] {
+  all: revert;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.4;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.25);
+  color: inherit;
+}
+
+.jsd-module-filter input[type="search"]::placeholder {
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: none;
+  opacity: 0.6;
+}
+
+/* ── Settings sidebar — secondary module-name filter (module-filter.mjs) ── */
+/* Reuses the native <search> tag, so core styling applies automatically —
+   only spacing below the native search field is needed here. */
+.jsd-module-filter {
+  margin-top: 6px;
+}
+
+/* ── Token Tools — GM Vision eye icon (gm-vision.mjs) ──
+   Scoped to its own [data-tool="jsd-gm-vision"] only — cannot match any
+   other control, so this never leaks into other tools' styling. Green only
+   while active; Foundry's own core CSS already handles the toggle's
+   pressed/highlighted background via the `.active` class on the button. */
+[data-tool="jsd-gm-vision"].jsd-gm-vision-on i {
+  color: #2ecc71;
+}
+
+/* ── Blank line spacing fix (text-spacing-fix.mjs) — Option A ──
+   Gives empty <p></p> (or <p><br></p>) elements real height so multiple
+   blank lines typed in the editor stay visible after saving, instead of
+   collapsing to zero height. Journal selector confirmed against MD
+   Madness's original, production-tested rule. `.editor-content` (sheets)
+   and `.message-content` (chat) use Foundry's standard class names but
+   were not individually re-verified live this session — narrow further
+   if a specific area still collapses. */
+body.jsd-fix-text-spacing .journal-entry-page .journal-page-content p,
+body.jsd-fix-text-spacing .editor-content p,
+body.jsd-fix-text-spacing .message-content p {
+  min-height: 1.5em;
+}
+
+body.jsd-fix-text-spacing .journal-entry-page .journal-page-content p:empty::before,
+body.jsd-fix-text-spacing .journal-entry-page .journal-page-content p:has(br:only-child)::before,
+body.jsd-fix-text-spacing .editor-content p:empty::before,
+body.jsd-fix-text-spacing .editor-content p:has(br:only-child)::before,
+body.jsd-fix-text-spacing .message-content p:empty::before,
+body.jsd-fix-text-spacing .message-content p:has(br:only-child)::before {
+  content: "\00a0";
+  display: inline-block;
+  width: 0;
+}
