@@ -27,6 +27,7 @@ import { JournalScalerFeature   } from "./features/journal-scaler/index.mjs";
 import { ModuleFilterFeature    } from "./features/module-filter.mjs";
 import { GMVisionFeature        } from "./features/gm-vision.mjs";
 import { TextSpacingFixFeature  } from "./features/text-spacing-fix.mjs";
+import { StatusSortFeature      } from "./features/status-sort.mjs";
 import { InstructionsViewer     } from "./apps/InstructionsViewer.mjs";
 import { registerSettingsDividers } from "./apps/SettingsDividers.mjs";
 
@@ -43,6 +44,7 @@ const FEATURES = [
   ModuleFilterFeature,
   GMVisionFeature,
   TextSpacingFixFeature,
+  StatusSortFeature,
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 

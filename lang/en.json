@@ -53,5 +53,8 @@
   "JSD.GMVision.RevealMode.Off": "Always off",
 
   "JSD.Settings.TextSpacingFix.Label": "Fix Blank Line Spacing",
-  "JSD.Settings.TextSpacingFix.Hint": "Preserves visible blank lines in journals, sheet descriptions, and chat messages, instead of Foundry's default of collapsing them to zero height. World setting — applies the same for every connected user. No reload needed."
+  "JSD.Settings.TextSpacingFix.Hint": "Preserves visible blank lines in journals, sheet descriptions, and chat messages, instead of Foundry's default of collapsing them to zero height. World setting — applies the same for every connected user. No reload needed.",
+
+  "JSD.Settings.StatusSort.Label": "Sort Status Effects",
+  "JSD.Settings.StatusSort.Hint": "Sorts the token HUD status effects palette alphabetically within each group. If the active system groups its own effects separately from Foundry core effects (e.g. Daggerheart), each group is sorted independently. Personal preference — applies only to you. Requires reload."
 }
