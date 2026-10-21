@@ -434,3 +434,128 @@ growth over a long session). If it needs to be pinned down: Chrome
 DevTools → Performance Monitor / Memory tab, watch listener count and JS
 heap size over a session with only this module enabled vs. others
 disabled one at a time.
+
+
+---
+
+## 10. Broadcast: showing macro windows to other connected users (v1.8.0)
+
+`scripts/features/broadcast.mjs`. Lets any macro show a **read-only snapshot
+window** to other connected users (GM to players, player to GM, anyone to
+anyone). Reusable by every future macro.
+
+### Why it lives in the module, not in the macro
+
+A macro only runs on the client of whoever clicked it, and a
+`game.socket.on` inside a macro only exists on that client. JSD runs on every
+client, so JSD owns the listener. The sender sends **data** (html + css strings),
+never code; the receiver renders it in a generic `BroadcastWindow`.
+`module.json` must keep `"socket": true`. Foundry only relays
+`module.<id>` events, so all JSD socket features share the channel
+`module.jack-small-details` and must tag messages with their own `feature`
+field (this one uses `"broadcast"`).
+
+### Contract every macro must follow to get an "Exibir para Conectados" button
+
+1. Build the window body as a function that can render in **read-only mode**
+   (no action buttons, inputs `disabled`, no `<form>` wrapper: `<form>` and
+   everything inside it is removed by the sanitizer). The receiver gets a static
+   snapshot, it cannot click anything.
+2. Write CSS **without a root prefix**. JSD wraps it as `#<window-id>{ ... }`
+   using native CSS nesting. Consequences: no `@keyframes` / `@font-face` in
+   broadcast CSS (dropped by the browser); put animations inline if needed.
+3. Escape every user-typed string interpolated into HTML
+   (`bc.esc(value)`), on both the GM window and the snapshot.
+4. Use a **stable `id`**. Sending again with the same `id` updates the open
+   window instead of opening a second one.
+5. Guard for JSD being absent or Broadcast disabled.
+
+Copy-paste block (macro side):
+
+```js
+// ── Broadcast (JSD) ──────────────────────────────────────────────
+const getBC = () => game.modules.get("jack-small-details")?.api?.broadcast;
+
+function exibirParaConectados(html, css) {
+  const bc = getBC();
+  if (!bc) return ui.notifications.warn("JSD Broadcast indisponivel (modulo desativado ou Broadcast desligado).");
+  bc.show(
+    { id: "meu-macro-preview", title: "Meu Macro: Previa", html, css, width: 560 },
+    { to: "all" }            // "all" | "gm" | "players" | ["userId", ...]
+  );
+}
+// Botao no HTML do painel do emissor:
+//   <button type="button" id="mm-btn-exibir">Exibir para Conectados</button>
+// Listener (no _onRender / _ligar):
+//   root.querySelector("#mm-btn-exibir")?.addEventListener("click", () =>
+//     exibirParaConectados(this._buildBody({ readOnly: true }), CSS_JANELA));
+```
+
+API (`game.modules.get("jack-small-details").api.broadcast`):
+
+| Call | Effect |
+|------|--------|
+| `show(payload, { to, local })` | Opens/updates the window on targets. `local: true` also opens it on the sender. Targets never include the sender (Foundry does not echo sockets). |
+| `close(id, { to, local })` | Closes the window with that `id` on targets. |
+| `esc(text)` | HTML-escape helper. |
+
+`payload`: `{ id, html, css?, title?, width?, height?, padding? }`
+(`padding` is the CSS padding of `.window-content`, default `"0"`).
+
+### Security notes (do not weaken)
+
+- The receiver sanitizes html (removes `script/style/iframe/object/embed/link/meta/base/form/template`,
+  every `on*` attribute, `data-action`, `javascript:` URLs) and strips `@import` from css.
+  `<style>` inside `html` is dropped on purpose: pass css via `payload.css`.
+- Target filtering is **client-side**. The payload reaches every client.
+  Never broadcast information a player must not see.
+- `senderId` is not authenticated by Foundry. Setting `broadcast.acceptFrom`
+  (`gm` default / `anyone`) is a convenience filter, not a security boundary.
+  If `gm`, player-sent windows are dropped and the sender gets a warning.
+- Limit: 400 000 characters of html+css per message.
+
+### Known limitations
+
+- Snapshot only: receivers cannot interact. Live two-way interaction would need
+  a registered handler on the receiver side (not implemented).
+- If a window is closed by a receiver, the next `show` with the same `id`
+  reopens it.
+
+
+### 10.1 Adapting an existing macro with one line (v1.9.0): `attachButton`
+
+For macros that already have a window, do NOT rewrite the template. Add one call
+and JSD puts a "Mostrar aos Conectados" icon in the window header. On click it
+snapshots the window **as it is on screen at that moment** (typed values,
+selected options, checked boxes, computed text) and shows it read-only to the
+others. Clicking again re-sends and updates the same window (not real time).
+
+```js
+game.modules.get("jack-small-details")?.api?.broadcast?.attachButton?.(el, {
+  id: "minha-macro-broadcast",          // stable id (optional, defaults to snap-<frame id>)
+  hide: ["#btn-rolar", "#btn-chat"],    // action elements removed from the snapshot
+  styles: ["id-do-style-no-head"],      // <style id> in document.head to include (optional)
+});
+```
+
+Where `el` and the call go:
+
+| Window type | Where | `el` |
+|---|---|---|
+| ApplicationV2 | inside `_replaceHTML(result, content)`, right after the content is set | `content` |
+| DialogV2 | inside the `render: (_ev, dialog) => {}` callback | `dialog.element` |
+| Legacy `new Dialog` | inside `render: (html) => {}` | `html[0]` |
+
+The call is idempotent and optional-chained, so the macro keeps working when JSD
+is absent or older (it just has no button).
+
+What `snapshot()` does automatically: bakes live control values into attributes;
+unwraps `<form>`; removes footers (`footer`, `.form-footer`, `.dialog-buttons`)
+and anything in `hide`; disables every remaining control; moves `<style>` found in
+the content, plus the head styles in `styles`, into `css`; rewrites selectors that
+target the window frame (`#frame-id`, frame-only classes such as `.hpc-window`,
+`:root`) to `&` so they apply to the receiver's window.
+
+Limits: tooltips and any JS-driven behavior do not exist on the receiver;
+`@keyframes` are dropped; the window shows the DOM, so anything hidden by JS only
+(not by CSS or the `hidden` attribute) is still sent.

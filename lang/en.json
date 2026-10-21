@@ -53,5 +53,24 @@
   "JSD.GMVision.RevealMode.Off": "Always off",
 
   "JSD.Settings.TextSpacingFix.Label": "Fix Blank Line Spacing",
-  "JSD.Settings.TextSpacingFix.Hint": "Preserves visible blank lines in journals, sheet descriptions, and chat messages, instead of Foundry's default of collapsing them to zero height. World setting — applies the same for every connected user. No reload needed."
+  "JSD.Settings.TextSpacingFix.Hint": "Preserves visible blank lines in journals, sheet descriptions, and chat messages, instead of Foundry's default of collapsing them to zero height. World setting — applies the same for every connected user. No reload needed.",
+
+  "JSD.Settings.StatusSort.Label": "Sort Status Effects",
+  "JSD.Settings.StatusSort.Hint": "Sorts the token HUD status effects palette alphabetically within each group. If the active system groups its own effects separately from Foundry core effects (e.g. Daggerheart), each group is sorted independently. Personal preference — applies only to you. Requires reload.",
+
+  "JSD.Settings.MacroLib.Label": "Macro Library Panel",
+  "JSD.Settings.MacroLib.Hint": "Shows a dedicated JSD panel button on the scene controls sidebar, with a copy of the Darkness slider and a Macro Library launcher. Requires reload.",
+  "JSD.Settings.MacroLib.Menu.Name": "Macro Library",
+  "JSD.Settings.MacroLib.Menu.Label": "Manage Macro Library",
+  "JSD.Settings.MacroLib.Menu.Hint": "Add, remove, and edit descriptions for macros in the JSD Macro Library compendium.",
+
+  "JSD.Panel.Title": "JSD Panel",
+  "JSD.MacroLib.PanelTitle": "Macro Library",
+
+  "JSD.Settings.Broadcast.Label": "Broadcast (show windows to connected users)",
+  "JSD.Settings.Broadcast.Hint": "Lets macros show read-only windows to other connected users through JSD (GM to players, or player to GM). Requires reload.",
+  "JSD.Settings.Broadcast.AcceptFrom.Label": "Broadcast: accept windows from",
+  "JSD.Settings.Broadcast.AcceptFrom.Hint": "Who may open windows on other users' screens. Keep on GM only unless you have a player macro that needs to show something to others. World setting.",
+  "JSD.Settings.Broadcast.AcceptFrom.GM": "GM only",
+  "JSD.Settings.Broadcast.AcceptFrom.Anyone": "Any connected user"
 }

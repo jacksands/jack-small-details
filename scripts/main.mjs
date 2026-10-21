@@ -10,14 +10,6 @@
  *        setup()                          — called on "setup" if isEnabled()
  *        initialize()                     — called on "ready" if isEnabled()
  *        getSceneControlButtons(controls) — called on "getSceneControlButtons" if isEnabled()
- *
- *   `setup()` exists specifically for features that must patch CONFIG
- *   classes (e.g. CONFIG.Token.objectClass, CONFIG.Canvas.*) before the
- *   canvas is configured. The once-hook order is:
- *     init → i18nInit → setup → ... → canvasConfig → ready
- *   So anything gated on "ready" is already too late for the FIRST scene's
- *   token/filter classes — use "setup" for that class of feature instead.
- *   See gm-vision.mjs for the concrete example.
  */
 
 import { DarknessSliderFeature } from "./features/darkness-slider.mjs";
@@ -27,14 +19,13 @@ import { JournalScalerFeature   } from "./features/journal-scaler/index.mjs";
 import { ModuleFilterFeature    } from "./features/module-filter.mjs";
 import { GMVisionFeature        } from "./features/gm-vision.mjs";
 import { TextSpacingFixFeature  } from "./features/text-spacing-fix.mjs";
+import { StatusSortFeature      } from "./features/status-sort.mjs";
+import { MacroLibraryFeature    } from "./features/macro-library.mjs";
+import { BroadcastFeature       } from "./features/broadcast.mjs";
 import { InstructionsViewer     } from "./apps/InstructionsViewer.mjs";
 import { registerSettingsDividers } from "./apps/SettingsDividers.mjs";
 
 // ─── Feature registry ─────────────────────────────────────────────────────────
-// Add new features here. Order = order in the Settings page.
-// Each feature may also export a `settingsGroup: { label, keys }` — see
-// darkness-slider.mjs for an example — to get its own header/divider on
-// the Settings page grouping its rows together. Purely optional.
 const FEATURES = [
   DarknessSliderFeature,
   SceneDefaultsFeature,
@@ -43,13 +34,14 @@ const FEATURES = [
   ModuleFilterFeature,
   GMVisionFeature,
   TextSpacingFixFeature,
+  StatusSortFeature,
+  MacroLibraryFeature,
+  BroadcastFeature,
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 
 const MODULE = "jack-small-details";
 
-/** Runs `fn` for a feature, logging (not throwing) so one broken feature
- *  can never silently prevent the rest of the module from registering. */
 function safeCall(Feature, methodName, ...args) {
   const fn = Feature[methodName];
   if (typeof fn !== "function") return;

@@ -144,6 +144,92 @@ function shouldRevealTokens() {
 }
 
 /* -------------------------------------------- */
+/* Level / surface guard — V14 Scene Levels.                                */
+/* -------------------------------------------- */
+
+/**
+ * True when the token lives on the level currently viewed on the canvas.
+ * Scenes without levels (or tokens with no level id) are treated as "same
+ * level". Compares ids on purpose: TokenDocument#includedInLevel has no
+ * documented semantics.
+ * @param {foundry.canvas.placeables.Token} token
+ * @returns {boolean}
+ */
+function isOnViewedLevel(token) {
+  const viewed = canvas.level;
+  const tokenLevel = token.document.level;
+  if (!viewed || !tokenLevel) return true;
+  return tokenLevel === viewed.id;
+}
+
+/**
+ * True when a Define Surface that blocks sight/culls tokens lies between the
+ * token and the viewed level AND the token sits over the solid part of it.
+ * A token seen through a hole is therefore NOT covered.
+ *
+ * "Between" uses the surface elevation (RegionSurface#elevation):
+ *   - below the viewer: token.elevation < surface.elevation <= viewed level bottom
+ *   - above the viewer: viewed level top <= surface.elevation <= token.elevation
+ *
+ * Only surfaces with `sight` or `culling` enabled count.
+ *
+ * Coverage uses 5 sample points (center + 4 points at +-1/4 of the token
+ * size). The token is covered only if ALL of them are blocked. A center-only
+ * test disagreed with core's own cull for tokens straddling a surface edge
+ * or hole border (core keeps those visible).
+ * @param {foundry.canvas.placeables.Token} token
+ * @returns {boolean}
+ */
+function isCoveredBySurface(token) {
+  try {
+    const level = canvas.level;
+    if (!level) return false;
+    const viewBottom = level.elevation?.bottom ?? 0;
+    const viewTop = level.elevation?.top ?? viewBottom;
+    const tokenElev = token.document.elevation ?? 0;
+
+    const blockers = [];
+    for (const surface of canvas.scene.getSurfaces()) {
+      if (!(surface.sight || surface.culling)) continue;
+      const se = surface.elevation;
+      const between =
+        (tokenElev < se && se <= viewBottom) ||
+        (viewTop <= se && se <= tokenElev);
+      if (!between) continue;
+
+      // 2D membership: probe at an elevation guaranteed to be inside the
+      // region's own elevation range (topInclusive may be false).
+      const { bottom, top } = surface.region.elevation ?? {};
+      const probe = (Number.isFinite(bottom) && Number.isFinite(top))
+        ? (bottom + top) / 2
+        : (Number.isFinite(bottom) ? bottom : (Number.isFinite(top) ? top : se));
+      blockers.push({ region: surface.region, probe });
+    }
+    if (!blockers.length) return false;
+
+    const { x, y } = token.center;
+    const size = canvas.dimensions.size;
+    const dx = (token.document.width ?? 1) * size / 4;
+    const dy = (token.document.height ?? 1) * size / 4;
+    const points = [[x, y], [x - dx, y - dy], [x + dx, y - dy], [x - dx, y + dy], [x + dx, y + dy]];
+
+    return points.every(([px, py]) =>
+      blockers.some(({ region, probe }) => region.testPoint({ x: px, y: py, elevation: probe })));
+  } catch (err) {
+    console.warn(`${MODULE} | GM Vision: surface check failed, treating token as not covered.`, err);
+  }
+  return false;
+}
+
+/**
+ * Reveal rule for tokens that core reports as not visible:
+ * same level -> reveal; other level -> reveal only if not under a surface.
+ */
+function canRevealHiddenToken(token) {
+  return isOnViewedLevel(token) || !isCoveredBySurface(token);
+}
+
+/* -------------------------------------------- */
 /* Token Tools icon — dedicated toggle, independent of the Lighting tool.   */
 /* -------------------------------------------- */
 
@@ -269,11 +355,14 @@ export const GMVisionFeature = {
     // which core already shows to the GM by default) previously bypassed
     // the reveal-mode setting entirely, since && binds tighter than ||.
     // That meant "Always off" had no effect on any document.hidden token.
+    // The !visible branch is additionally gated by canRevealHiddenToken():
+    // tokens on other levels are only revealed when no sight/cull surface
+    // covers them (i.e. they are seen through a hole).
     libWrapper.register(MODULE, "CONFIG.Token.objectClass.prototype.isVisible", function (wrapped, ...args) {
       const visible = wrapped(...args);
 
       if (shouldRevealTokens() && (
-            (!visible && (this._preview?.previewType !== "config")
+            (!visible && canRevealHiddenToken(this) && (this._preview?.previewType !== "config")
               && !(this.layer.active && this.document.visible && (ui.placeables?.isEntryVisible(this) === false)))
             || (visible && this.document.hidden)
           )) {
