@@ -13,6 +13,7 @@ A personal collection of small quality-of-life improvements for Foundry VTT V14.
 - [Module Filter](#module-filter)
 - [GM Clear Vision](#gm-clear-vision)
 - [Fix Blank Line Spacing](#fix-blank-line-spacing)
+- [Broadcast](#broadcast)
 
 ---
 
@@ -231,6 +232,29 @@ By default, Foundry collapses multiple blank lines you type in a journal/sheet/c
 
 - If a specific sheet or chat card still collapses blank lines, its content container may use a class name other than `.editor-content` / `.message-content` — inspect it in devtools and report the actual class so the CSS selector can be added.
 - Exporting journal content outside of Foundry (e.g. a PDF export macro) will only preserve this spacing if the exporting tool also has this module's CSS loaded in the same browser context.
+
+---
+
+## Broadcast
+
+Infrastructure for macros: lets a macro show a window on the screens of other connected users (for example GM to players). It does nothing by itself; macros that support it have an **Exibir para Conectados** button.
+
+- Windows shown this way are **read-only** for the receivers.
+- Sending again from the same macro updates the already open window instead of opening another one.
+- Receivers can close the window at any time.
+
+### Settings
+
+| Setting | Description |
+|---------|-------------|
+| **Broadcast** | Enable or disable the feature. World setting. Requires reload. |
+| **Broadcast: accept windows from** | **GM only** (default) or **Any connected user**. Switch to "Any connected user" only if you have a player-side macro that needs to show something to others. |
+
+### Notes
+
+- Only active users receive it. Someone who connects later does not get windows sent earlier.
+- Macros that use `attachButton` (v1.9.0) get a small broadcast icon in the window header. Clicking it sends a read-only snapshot of the window as it is at that moment; click again to refresh it for the others.
+- Macro authors: see section 10 of `technical-instructions.md` for the code new macros must include.
 
 ---
 
