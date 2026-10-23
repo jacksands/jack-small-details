@@ -22,6 +22,7 @@ import { TextSpacingFixFeature  } from "./features/text-spacing-fix.mjs";
 import { StatusSortFeature      } from "./features/status-sort.mjs";
 import { MacroLibraryFeature    } from "./features/macro-library.mjs";
 import { BroadcastFeature       } from "./features/broadcast.mjs";
+>>>>>>> 544e2ee920875dedc3a6e1c377d38f70684404ba
 import { InstructionsViewer     } from "./apps/InstructionsViewer.mjs";
 import { registerSettingsDividers } from "./apps/SettingsDividers.mjs";
 
@@ -37,6 +38,7 @@ const FEATURES = [
   StatusSortFeature,
   MacroLibraryFeature,
   BroadcastFeature,
+>>>>>>> 544e2ee920875dedc3a6e1c377d38f70684404ba
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 

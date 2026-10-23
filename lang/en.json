@@ -73,4 +73,5 @@
   "JSD.Settings.Broadcast.AcceptFrom.Hint": "Who may open windows on other users' screens. Keep on GM only unless you have a player macro that needs to show something to others. World setting.",
   "JSD.Settings.Broadcast.AcceptFrom.GM": "GM only",
   "JSD.Settings.Broadcast.AcceptFrom.Anyone": "Any connected user"
+>>>>>>> 544e2ee920875dedc3a6e1c377d38f70684404ba
 }
