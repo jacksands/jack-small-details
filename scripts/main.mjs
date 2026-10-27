@@ -17,11 +17,11 @@ import { SceneDefaultsFeature   } from "./features/scene-defaults.mjs";
 import { BackgroundVolumeFeature } from "./features/background-volume.mjs";
 import { JournalScalerFeature   } from "./features/journal-scaler/index.mjs";
 import { ModuleFilterFeature    } from "./features/module-filter.mjs";
+import { FilePickerFolderFilterFeature } from "./features/file-picker-folder-filter.mjs";
 import { GMVisionFeature        } from "./features/gm-vision.mjs";
 import { TextSpacingFixFeature  } from "./features/text-spacing-fix.mjs";
 import { StatusSortFeature      } from "./features/status-sort.mjs";
 import { MacroLibraryFeature    } from "./features/macro-library.mjs";
-import { BroadcastFeature       } from "./features/broadcast.mjs";
 import { InstructionsViewer     } from "./apps/InstructionsViewer.mjs";
 import { registerSettingsDividers } from "./apps/SettingsDividers.mjs";
 
@@ -32,11 +32,11 @@ const FEATURES = [
   BackgroundVolumeFeature,
   JournalScalerFeature,
   ModuleFilterFeature,
+  FilePickerFolderFilterFeature,
   GMVisionFeature,
   TextSpacingFixFeature,
   StatusSortFeature,
   MacroLibraryFeature,
-  BroadcastFeature,
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 
