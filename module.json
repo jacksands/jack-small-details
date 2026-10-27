@@ -1,0 +1,41 @@
+{
+  "id": "jack-small-details",
+  "title": "Jack Small Details",
+  "description": "A personal collection of small quality-of-life improvements for Foundry VTT.",
+  "version": "1.9.0",
+  "authors": [{ "name": "Jack" }],
+  "compatibility": { "minimum": 14, "verified": 14 },
+  "socket": true,
+  "esmodules": ["scripts/main.mjs"],
+  "styles": ["styles/jack-small-details.css"],
+  "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" }],
+  "packs": [
+    {
+      "name": "jsd-macros",
+      "label": "JSD — Macro Library",
+      "type": "Macro",
+      "path": "packs/jsd-macros",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OWNER",
+        "GAMEMASTER": "OWNER"
+      },
+      "flags": {}
+    }
+  ],
+  "relationships": {
+    "requires": [
+      {
+        "id": "lib-wrapper",
+        "type": "module",
+        "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json",
+        "compatibility": { "minimum": "1.13.0.0" }
+      }
+    ]
+  },
+  "flags": {},
+  "url": "https://github.com/jacksands/jack-small-details",
+  "manifest": "https://raw.githubusercontent.com/jacksands/jack-small-details/refs/heads/main/module.json",
+  "download": "https://github.com/jacksands/jack-small-details/archive/refs/heads/main.zip"
+}
