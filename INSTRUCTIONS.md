@@ -11,9 +11,9 @@ A personal collection of small quality-of-life improvements for Foundry VTT V14.
 - [Background Volume Slider](#background-volume-slider)
 - [Journal Scaler](#journal-scaler)
 - [Module Filter](#module-filter)
+- [File Picker Folder Filter](#file-picker-folder-filter)
 - [GM Clear Vision](#gm-clear-vision)
 - [Fix Blank Line Spacing](#fix-blank-line-spacing)
-- [Broadcast](#broadcast)
 
 ---
 
@@ -183,6 +183,22 @@ The typed text is not remembered — it's always empty again the next time you o
 
 ---
 
+## File Picker Folder Filter
+
+Adds a second field next to the **Filter Results** field in Foundry's File Picker, splitting that row in two.
+
+- The **native** field (left) is unchanged: it still filters folders and files together.
+- The **new** field (right, "Filter folders…") hides only the **folders** (left pane) whose name doesn't contain what you typed. Files are never affected.
+- When you **open a folder**, the new field clears itself, so you can filter again inside the new folder. Press **Esc** in the field to clear it without closing the picker.
+
+### Settings
+
+| Setting | Description |
+|---------|-------------|
+| **File Picker Folder Filter** | Enable or disable the second field, for yourself. Requires reload. |
+
+---
+
 ## GM Clear Vision
 
 Adds an eye icon to the **Token Tools** toolbar (left sidebar, arrow icon) that lets the GM see hidden/undetected tokens and darken/brighten unexplored fog of war — without revealing anything to players.
@@ -232,29 +248,6 @@ By default, Foundry collapses multiple blank lines you type in a journal/sheet/c
 
 - If a specific sheet or chat card still collapses blank lines, its content container may use a class name other than `.editor-content` / `.message-content` — inspect it in devtools and report the actual class so the CSS selector can be added.
 - Exporting journal content outside of Foundry (e.g. a PDF export macro) will only preserve this spacing if the exporting tool also has this module's CSS loaded in the same browser context.
-
----
-
-## Broadcast
-
-Infrastructure for macros: lets a macro show a window on the screens of other connected users (for example GM to players). It does nothing by itself; macros that support it have an **Exibir para Conectados** button.
-
-- Windows shown this way are **read-only** for the receivers.
-- Sending again from the same macro updates the already open window instead of opening another one.
-- Receivers can close the window at any time.
-
-### Settings
-
-| Setting | Description |
-|---------|-------------|
-| **Broadcast** | Enable or disable the feature. World setting. Requires reload. |
-| **Broadcast: accept windows from** | **GM only** (default) or **Any connected user**. Switch to "Any connected user" only if you have a player-side macro that needs to show something to others. |
-
-### Notes
-
-- Only active users receive it. Someone who connects later does not get windows sent earlier.
-- Macros that use `attachButton` (v1.9.0) get a small broadcast icon in the window header. Clicking it sends a read-only snapshot of the window as it is at that moment; click again to refresh it for the others.
-- Macro authors: see section 10 of `technical-instructions.md` for the code new macros must include.
 
 ---
 
