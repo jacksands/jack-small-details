@@ -606,3 +606,26 @@ body.jsd-fix-text-spacing .message-content p:has(br:only-child)::before {
   background: #2a2018;
   color: #f5e6d3;
 }
+
+/* ── File Picker — folder-only filter (file-picker-folder-filter.mjs) ──
+   Prefixed with the picker's own id (#file-picker, confirmed app id). The
+   native filter input is moved into this flex row next to our clone, so the
+   row is split in two halves. */
+#file-picker .jsd-fpff-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+#file-picker .jsd-fpff-row > input {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+}
+
+#file-picker li.jsd-fpff-hidden {
+  display: none !important;
+}
