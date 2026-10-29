@@ -40,6 +40,16 @@
   "JSD.Settings.ModuleFilter.Hint": "Adds a second search field below Foundry's native Settings search, letting you filter the module list in the sidebar by name only (e.g. typing \"jack\" hides every module except this one). Does not change the native search's own behavior. Requires reload.",
   "JSD.ModuleFilter.Placeholder": "Filter modules by name…",
 
+  "JSD.Settings.FilePickerFolderFilter.Label": "File Picker Folder Filter",
+  "JSD.Settings.FilePickerFolderFilter.Hint": "Adds a second field next to the File Picker's native \"Filter Results\" field. It filters only the folder list by name, and clears itself automatically when you open a folder so you can filter again inside it. Does not change the native filter. Requires reload.",
+  "JSD.FilePickerFolderFilter.Placeholder": "Filter folders…",
+
+  "JSD.Settings.FilePickerSpaceDisplay.Label": "File Picker: Show Spaces Instead of %20",
+  "JSD.Settings.FilePickerSpaceDisplay.Hint": "In the File Browser, displays spaces where names show \"%20\" (favorites, folder and file names, tooltips). Display only: the real value of every field, path and stored data keeps \"%20\" (path fields only show spaces while not focused), so other modules are not affected. Applies instantly; also togglable from the File Browser window header and the JSD Panel in the Scene Controls.",
+  "JSD.FilePickerSpaceDisplay.ToolTitle": "Toggle File Browser: show spaces instead of %20",
+  "JSD.FilePickerSpaceDisplay.TooltipOn": "Showing spaces instead of %20 (click to show the raw names)",
+  "JSD.FilePickerSpaceDisplay.TooltipOff": "Showing raw names with %20 (click to show spaces)",
+
   "JSD.Settings.GMVision.Label": "GM Clear Vision",
   "JSD.Settings.GMVision.Hint": "Master on/off for the whole GM Clear Vision feature — the Token Tools icon, the Ctrl+G keybinding, and all of its effects (hidden-token outline, darkness/fog brightening). Turning this off removes the icon entirely, not just its ability to be toggled. Requires the 'lib-wrapper' module to be installed and active. Requires reload.",
   "JSD.GMVision.ToolTitle": "Toggle GM Clear Vision",
@@ -65,12 +75,5 @@
   "JSD.Settings.MacroLib.Menu.Hint": "Add, remove, and edit descriptions for macros in the JSD Macro Library compendium.",
 
   "JSD.Panel.Title": "JSD Panel",
-  "JSD.MacroLib.PanelTitle": "Macro Library",
-
-  "JSD.Settings.Broadcast.Label": "Broadcast (show windows to connected users)",
-  "JSD.Settings.Broadcast.Hint": "Lets macros show read-only windows to other connected users through JSD (GM to players, or player to GM). Requires reload.",
-  "JSD.Settings.Broadcast.AcceptFrom.Label": "Broadcast: accept windows from",
-  "JSD.Settings.Broadcast.AcceptFrom.Hint": "Who may open windows on other users' screens. Keep on GM only unless you have a player macro that needs to show something to others. World setting.",
-  "JSD.Settings.Broadcast.AcceptFrom.GM": "GM only",
-  "JSD.Settings.Broadcast.AcceptFrom.Anyone": "Any connected user"
+  "JSD.MacroLib.PanelTitle": "Macro Library"
 }
