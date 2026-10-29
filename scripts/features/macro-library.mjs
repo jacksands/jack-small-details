@@ -206,9 +206,11 @@ export const MacroLibraryFeature = {
       catch { return "apply"; }
     })();
 
+    // Merge, don't replace: other JSD features (e.g. File Picker Space Display)
+    // register their tools into this group before this feature runs.
     controls["jsd"] = {
       name: "jsd", title: game.i18n.localize("JSD.Panel.Title"),
-      icon: "fa-solid fa-toolbox", visible: true, tools: {},
+      icon: "fa-solid fa-toolbox", visible: true, tools: controls["jsd"]?.tools ?? {},
     };
 
     controls["jsd"].tools["jsd-panel-darkness"] = {

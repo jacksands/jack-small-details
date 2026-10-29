@@ -435,127 +435,85 @@ DevTools → Performance Monitor / Memory tab, watch listener count and JS
 heap size over a session with only this module enabled vs. others
 disabled one at a time.
 
+## 10. File Picker Folder Filter (`file-picker-folder-filter.mjs`)
 
----
+Second filter field in the core `FilePicker` (ApplicationV2, id `file-picker`,
+parts `tabs`, `subheader`, `body`, `subfooter`, `footer`, all confirmed from a
+live console), filtering only the folder list and clearing on navigation.
 
-## 10. Broadcast: showing macro windows to other connected users (v1.8.0)
+**Unverified assumptions (no live DOM capture yet):** native filter is
+`input[name="filter"]` (fallback: `input[type="search"]` in the subheader
+part) and the folder list is `ul.directory > li`. Every lookup is defensive:
+when something is missing the feature logs one `console.warn` per picker
+listing the inputs it found, instead of failing silently. If it misbehaves,
+capture the real DOM (`copy(fp.element.outerHTML)`) and fix the two selectors
+at the top of the file.
 
-`scripts/features/broadcast.mjs`. Lets any macro show a **read-only snapshot
-window** to other connected users (GM to players, player to GM, anyone to
-anyone). Reusable by every future macro.
+Design notes:
+- Our input is `native.cloneNode(false)` (id/name stripped), so it inherits
+  the native field's exact core styling and no form handler / SearchFilter
+  can bind to it. The native input is *moved* into a flex wrapper
+  (`.jsd-fpff-row`), never cloned or re-created, so its listeners survive.
+- Hiding uses a class (`jsd-fpff-hidden`, `display:none !important`) instead
+  of inline styles, so it can't fight whatever the native filter does to the
+  same `<li>`.
+- Auto-clear has two triggers: a click on `ul.directory li` (immediate), and
+  a target-folder change detected on render (`app.target`, falling back to
+  `app.result?.target` and `input[name="target"]`). The second covers a
+  partial re-render where only the body part is rebuilt and our input
+  (living in the subheader) survives.
+- Filter is re-applied on every render because a body re-render recreates
+  the `<li>` elements and drops the hidden class.
+- Possible conflict not yet tested: the `filepicker-plus` module may rebuild
+  the same lists after the core render. If hidden folders reappear, add a
+  `MutationObserver` on `ul.directory` that calls `applyFilter`.
 
-### Why it lives in the module, not in the macro
+## 11. File Picker Space Display (`file-picker-space-display.mjs`)
 
-A macro only runs on the client of whoever clicked it, and a
-`game.socket.on` inside a macro only exists on that client. JSD runs on every
-client, so JSD owns the listener. The sender sends **data** (html + css strings),
-never code; the receiver renders it in a generic `BroadcastWindow`.
-`module.json` must keep `"socket": true`. Foundry only relays
-`module.<id>` events, so all JSD socket features share the channel
-`module.jack-small-details` and must tag messages with their own `feature`
-field (this one uses `"broadcast"`).
+Visual-only replacement of the literal `%20` by a space. Two mechanisms:
 
-### Contract every macro must follow to get an "Exibir para Conectados" button
+**A. File Browser window text** (`FilePicker` only): visible text nodes plus
+`title` / `data-tooltip` attributes. Never `<input>`, `<textarea>`,
+`<select>`, `<option>`, `<script>`, `<style>`, nor any other `data-*`.
+Originals live in WeakMaps (`TEXT_ORIGINALS`, `ATTR_ORIGINALS`); a node is
+refreshed whenever it still contains `%20` (so content rewritten later is
+tracked) and restored only if its current value is still what we wrote.
 
-1. Build the window body as a function that can render in **read-only mode**
-   (no action buttons, inputs `disabled`, no `<form>` wrapper: `<form>` and
-   everything inside it is removed by the sanitizer). The receiver gets a static
-   snapshot, it cannot click anything.
-2. Write CSS **without a root prefix**. JSD wraps it as `#<window-id>{ ... }`
-   using native CSS nesting. Consequences: no `@keyframes` / `@font-face` in
-   broadcast CSS (dropped by the browser); put animations inline if needed.
-3. Escape every user-typed string interpolated into HTML
-   (`bc.esc(value)`), on both the GM window and the snapshot.
-4. Use a **stable `id`**. Sending again with the same `id` updates the open
-   window instead of opening a second one.
-5. Guard for JSD being absent or Broadcast disabled.
+**B. Path inputs** (any window with a `<file-picker>`, plus the text inputs of
+the File Browser): `input.value` is **never written**. While not focused the
+input gets `.jsd-fpsd-masked` (`-webkit-text-fill-color: transparent`) and a
+sibling `.jsd-fpsd-overlay` span draws the decoded text. Focus removes both,
+so the user edits the real value and a save can only submit `%20`. A
+substitution approach (writing the decoded value and restoring on submit) was
+rejected: `FormDataExtended`'s read path for custom form elements is unknown,
+and a wrong guess would corrupt saved paths.
+- The overlay is inserted in the input's own parent; a `static` parent gets
+  `position: relative` (original inline value kept in `data-jsd-fpsd-pos` and
+  restored when its last overlay goes), otherwise the overlay would not scroll
+  with a scrolled form.
+- A `ResizeObserver` (input and parent) re-lays the overlay out when a hidden
+  tab is shown or the window resizes.
+- Delegated listeners per window (`focusin`, `focusout`, `change`) keep it in
+  sync; `change` is re-checked one tick later because `<file-picker>` fires it
+  after picking a file, with no focus change.
 
-Copy-paste block (macro side):
+**Live on/off:** setting `filePickerSpaceDisplay.enabled`
+(`scope: "user"`, `onChange` -> `refreshAll()`, no reload). Toggle sources: the
+setting, a `.jsd-fpsd-toggle` button in the File Browser `.window-header`, and
+the `jsd-fp-space-display` tool in the **JSD Panel** (`controls.jsd`). All
+write the same setting. `isEnabled()` always returns true by design so the
+toggles exist while the feature is off.
 
-```js
-// ── Broadcast (JSD) ──────────────────────────────────────────────
-const getBC = () => game.modules.get("jack-small-details")?.api?.broadcast;
+**JSD Panel group:** `macro-library.mjs` owns `controls.jsd` and runs after this
+feature, so it now merges existing tools (`tools: controls.jsd?.tools ?? {}`)
+instead of replacing the group. If Macro Library is disabled this feature
+creates the group itself. The tool is GM only (the group is GM only).
 
-function exibirParaConectados(html, css) {
-  const bc = getBC();
-  if (!bc) return ui.notifications.warn("JSD Broadcast indisponivel (modulo desativado ou Broadcast desligado).");
-  bc.show(
-    { id: "meu-macro-preview", title: "Meu Macro: Previa", html, css, width: 560 },
-    { to: "all" }            // "all" | "gm" | "players" | ["userId", ...]
-  );
-}
-// Botao no HTML do painel do emissor:
-//   <button type="button" id="mm-btn-exibir">Exibir para Conectados</button>
-// Listener (no _onRender / _ligar):
-//   root.querySelector("#mm-btn-exibir")?.addEventListener("click", () =>
-//     exibirParaConectados(this._buildBody({ readOnly: true }), CSS_JANELA));
-```
+**Unverified (no live DOM capture):** `.window-header` presence, that path
+fields are `<input>` inside `<file-picker>`, and overlay pixel alignment
+across themes. The first render logs
+`ON (render) in "<id>": N text/attribute item(s) converted, M input(s) masked`.
+If `M` is 0 in a window showing `%20` in a path field, the field is not an
+`<input>` inside `<file-picker>`.
 
-API (`game.modules.get("jack-small-details").api.broadcast`):
-
-| Call | Effect |
-|------|--------|
-| `show(payload, { to, local })` | Opens/updates the window on targets. `local: true` also opens it on the sender. Targets never include the sender (Foundry does not echo sockets). |
-| `close(id, { to, local })` | Closes the window with that `id` on targets. |
-| `esc(text)` | HTML-escape helper. |
-
-`payload`: `{ id, html, css?, title?, width?, height?, padding? }`
-(`padding` is the CSS padding of `.window-content`, default `"0"`).
-
-### Security notes (do not weaken)
-
-- The receiver sanitizes html (removes `script/style/iframe/object/embed/link/meta/base/form/template`,
-  every `on*` attribute, `data-action`, `javascript:` URLs) and strips `@import` from css.
-  `<style>` inside `html` is dropped on purpose: pass css via `payload.css`.
-- Target filtering is **client-side**. The payload reaches every client.
-  Never broadcast information a player must not see.
-- `senderId` is not authenticated by Foundry. Setting `broadcast.acceptFrom`
-  (`gm` default / `anyone`) is a convenience filter, not a security boundary.
-  If `gm`, player-sent windows are dropped and the sender gets a warning.
-- Limit: 400 000 characters of html+css per message.
-
-### Known limitations
-
-- Snapshot only: receivers cannot interact. Live two-way interaction would need
-  a registered handler on the receiver side (not implemented).
-- If a window is closed by a receiver, the next `show` with the same `id`
-  reopens it.
-
-
-### 10.1 Adapting an existing macro with one line (v1.9.0): `attachButton`
-
-For macros that already have a window, do NOT rewrite the template. Add one call
-and JSD puts a "Mostrar aos Conectados" icon in the window header. On click it
-snapshots the window **as it is on screen at that moment** (typed values,
-selected options, checked boxes, computed text) and shows it read-only to the
-others. Clicking again re-sends and updates the same window (not real time).
-
-```js
-game.modules.get("jack-small-details")?.api?.broadcast?.attachButton?.(el, {
-  id: "minha-macro-broadcast",          // stable id (optional, defaults to snap-<frame id>)
-  hide: ["#btn-rolar", "#btn-chat"],    // action elements removed from the snapshot
-  styles: ["id-do-style-no-head"],      // <style id> in document.head to include (optional)
-});
-```
-
-Where `el` and the call go:
-
-| Window type | Where | `el` |
-|---|---|---|
-| ApplicationV2 | inside `_replaceHTML(result, content)`, right after the content is set | `content` |
-| DialogV2 | inside the `render: (_ev, dialog) => {}` callback | `dialog.element` |
-| Legacy `new Dialog` | inside `render: (html) => {}` | `html[0]` |
-
-The call is idempotent and optional-chained, so the macro keeps working when JSD
-is absent or older (it just has no button).
-
-What `snapshot()` does automatically: bakes live control values into attributes;
-unwraps `<form>`; removes footers (`footer`, `.form-footer`, `.dialog-buttons`)
-and anything in `hide`; disables every remaining control; moves `<style>` found in
-the content, plus the head styles in `styles`, into `css`; rewrites selectors that
-target the window frame (`#frame-id`, frame-only classes such as `.hpc-window`,
-`:root`) to `&` so they apply to the receiver's window.
-
-Limits: tooltips and any JS-driven behavior do not exist on the receiver;
-`@keyframes` are dropped; the window shows the DOM, so anything hidden by JS only
-(not by CSS or the `hidden` attribute) is still sent.
+The folder filter (section 10) normalises `%20` to a space when matching.

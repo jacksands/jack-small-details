@@ -606,3 +606,61 @@ body.jsd-fix-text-spacing .message-content p:has(br:only-child)::before {
   background: #2a2018;
   color: #f5e6d3;
 }
+
+/* ── File Picker — folder-only filter (file-picker-folder-filter.mjs) ──
+   Prefixed with the picker's own id (#file-picker, confirmed app id). The
+   native filter input is moved into this flex row next to our clone, so the
+   row is split in two halves. */
+#file-picker .jsd-fpff-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+#file-picker .jsd-fpff-row > input {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+}
+
+#file-picker li.jsd-fpff-hidden {
+  display: none !important;
+}
+
+/* ── File Picker — spaces instead of %20 (file-picker-space-display.mjs) ──
+   Header toggle is scoped to the picker's own id (#file-picker). The scene
+   tool is matched by its unique data-tool, same pattern as GM Clear Vision.
+   The overlay/mask classes only exist on elements this feature creates or
+   marks (path inputs can live in any window, so no single window id fits). */
+#file-picker .window-header .jsd-fpsd-toggle:not(.jsd-fpsd-on) {
+  opacity: 0.6;
+}
+
+#file-picker .window-header .jsd-fpsd-toggle.jsd-fpsd-on {
+  color: #2ecc71;
+}
+
+[data-tool="jsd-fp-space-display"].jsd-fpsd-on i {
+  color: #2ecc71;
+}
+
+/* Path-input display overlay: the real input text is hidden while not
+   focused and this span (created by the feature) draws it with spaces. It
+   never intercepts the pointer, so clicks still focus the input below. */
+.jsd-fpsd-overlay {
+  position: absolute;
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: pre;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  z-index: 1;
+}
+
+input.jsd-fpsd-masked {
+  -webkit-text-fill-color: transparent;
+}
+
