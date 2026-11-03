@@ -11,9 +11,12 @@ A personal collection of small quality-of-life improvements for Foundry VTT V14.
 - [Background Volume Slider](#background-volume-slider)
 - [Journal Scaler](#journal-scaler)
 - [Module Filter](#module-filter)
+- [File Picker Folder Filter](#file-picker-folder-filter)
+- [File Picker: Readable Names](#file-picker-readable-names)
 - [GM Clear Vision](#gm-clear-vision)
 - [Fix Blank Line Spacing](#fix-blank-line-spacing)
-- [Broadcast](#broadcast)
+- [Sort Status Effects](#sort-status-effects)
+- [JSD Panel and Macro Library](#jsd-panel-and-macro-library)
 
 ---
 
@@ -183,6 +186,45 @@ The typed text is not remembered — it's always empty again the next time you o
 
 ---
 
+## File Picker Folder Filter
+
+Adds a second field next to the **Filter Results** field in Foundry's File Picker, splitting that row in two.
+
+- The **native** field (left) is unchanged: it still filters folders and files together.
+- The **new** field (right, "Filter folders…") hides only the **folders** (left pane) whose name doesn't contain what you typed. Files are never affected.
+- When you **open a folder**, the new field clears itself, so you can filter again inside the new folder. Press **Esc** in the field to clear it without closing the picker.
+
+### Settings
+
+| Setting | Description |
+|---------|-------------|
+| **File Picker Folder Filter** | Enable or disable the second field, for yourself. Requires reload. |
+
+---
+
+## File Picker: Readable Names
+
+Foundry stores paths URL-encoded: a favorite named "Infused Mana Crystal" shows up as `Infused%20Mana%20Crystal`, and a folder named "ANIMAÇÕES" as `ANIMA%C3%87%C3%95ES`. This feature displays the readable text instead, **only on screen**.
+
+- Decodes every valid `%XX` sequence for display: `%20` becomes a space, `%C3%87` becomes `Ç`, `%5B` / `%5D` become `[` / `]`, and so on.
+- Affects visible text in the File Browser (favorites, folder and file names, tooltips) **and** path fields such as *Tile Image or Video*, *Background Image* and the File Browser's *Selected* field, in any window.
+- In path fields the readable text is *drawn* over the real one and **stays visible while the field is focused**, so long names remain readable. Hover the field to see the full decoded name in a tooltip, or move the cursor / drag the mouse / press **End** to scroll the readable text along and read the rest of a long name. The real value (and what gets saved) always stays encoded.
+- **Ctrl+C** (or Copy) always copies the **whole real path**, even if you selected only part of it. **Ctrl+A** selects everything, and typing or pasting over a select-all replaces the whole value as usual.
+- Any other edit (typing, Delete/Backspace, a partial paste or cut, undo) **switches the field to its real text** and ignores that first keystroke, so nothing is ever inserted at the wrong place. A notice tells you to repeat your action; the real text is now visible and editable (paste or type again). To replace the whole path in one go, press **Ctrl+A** and then paste. The readable text returns when you leave the field.
+- Does **not** touch real paths, `data-*` attributes or saved data, so other modules keep working.
+- Safe by design: a lone `%` is left alone, invalid sequences are not decoded, and control characters stay encoded.
+- The folder filter understands it too: typing "mana crystal" finds `Mana%20Crystal`, and "ações" finds `ANIMA%C3%87%C3%95ES`.
+- Applies **instantly**, also to windows that are already open.
+
+### Turning it on and off
+
+- **Setting:** *File Picker: Show Readable Names* (per user).
+- **Window header:** the **Aa** button next to the window menu, in the File Browser **and** in every window that has path fields (Scene configuration, Tile configuration...). Green means on.
+- **Copy the clean path:** **right-click** (or **Shift+click**) that same **Aa** button. It copies the readable text of the path field you last used in that window (or the first visible one) to the clipboard. It works whether the feature is on or off, and never changes the field.
+- **Scene Controls:** the same icon in the **JSD Panel** (GM only). Green means on.
+
+---
+
 ## GM Clear Vision
 
 Adds an eye icon to the **Token Tools** toolbar (left sidebar, arrow icon) that lets the GM see hidden/undetected tokens and darken/brighten unexplored fog of war — without revealing anything to players.
@@ -204,6 +246,7 @@ The dashed outline shown over hidden/undetected tokens is a **separate, independ
 - **GM only.** The entire feature — hooks, icon, and CONFIG patches — is only ever registered when the current user is a GM. A player's client never runs any of this code, regardless of the toggle state.
 - The eye icon's own on/off state is personal (per browser), so each GM client remembers its own state independently.
 - Does not persist anything to any document — purely a local rendering overlay.
+- **Multi-level scenes (V14 Levels):** the dashed outline and reveal apply to hidden tokens on the level you are currently **viewing**. For tokens on any other level, they apply only if no surface (Define Surface region with *Restricts Sight* or *Cull Tokens*) covers it, so a token seen through a hole in the floor still shows, while one hidden under solid floor does not. The check samples five points of the token (center and four inner points), so a token straddling the edge of a hole or surface is treated like Foundry itself treats it: still shown.
 
 ### Settings
 
@@ -235,26 +278,47 @@ By default, Foundry collapses multiple blank lines you type in a journal/sheet/c
 
 ---
 
-## Broadcast
+## Sort Status Effects
 
-Infrastructure for macros: lets a macro show a window on the screens of other connected users (for example GM to players). It does nothing by itself; macros that support it have an **Exibir para Conectados** button.
+Sorts the status effects palette of the **Token HUD** alphabetically.
 
-- Windows shown this way are **read-only** for the receivers.
-- Sending again from the same macro updates the already open window instead of opening another one.
-- Receivers can close the window at any time.
+- If the game system groups its own effects separately from Foundry's core effects (for example Daggerheart), **each group is sorted on its own**; the group labels and the "clear all" button stay where they are.
+- Purely visual and personal: it does not change any token or effect.
 
 ### Settings
 
 | Setting | Description |
 |---------|-------------|
-| **Broadcast** | Enable or disable the feature. World setting. Requires reload. |
-| **Broadcast: accept windows from** | **GM only** (default) or **Any connected user**. Switch to "Any connected user" only if you have a player-side macro that needs to show something to others. |
+| **Sort Status Effects** | Enable or disable, for yourself only (per user, per world). Off by default. Requires reload. |
 
-### Notes
+---
 
-- Only active users receive it. Someone who connects later does not get windows sent earlier.
-- Macros that use `attachButton` (v1.9.0) get a small broadcast icon in the window header. Clicking it sends a read-only snapshot of the window as it is at that moment; click again to refresh it for the others.
-- Macro authors: see section 10 of `technical-instructions.md` for the code new macros must include.
+## JSD Panel and Macro Library
+
+GM only. A **toolbox icon** (amber) in the Scene Controls opens the **JSD Panel**: a group of quick-access buttons for this module, in this order:
+
+| Button | What it does |
+|--------|--------------|
+| **Darkness Level** (moon) | Opens the same darkness slider as the Darkness Slider feature, anchored next to the button. Click again to close. Needs an active scene. |
+| **Macro Library** (`</>`) | Opens a small panel listing the macros of the **JSD Macro Library** compendium, each with its description. **Click a macro to run it.** The panel also has a button to manage the library. |
+| **Scene Defaults** (film) | Opens the Scene Defaults configuration. |
+| **GM Clear Vision** (eye) | Toggles GM Clear Vision, same as the eye in the Token Tools. |
+| **Readable names** (Aa) | Turns the *File Picker: Readable Names* feature on or off. |
+| **JSD Module Settings** (gear) | Opens the Foundry settings directly on the Jack Small Details tab. |
+
+### Macro Library
+
+- The module ships with its own compendium (**JSD — Macro Library**). On first load it is filled with the default macros: *Item to Journal*, *Lock Token Rotation*, *Mass Scene Editor*, *Ownership Manager*, *Scene & Door Control*, *Scene Rescaler* and *Hide Camera Bar*.
+- **Settings → Jack Small Details → Manage Macro Library** (GM only) opens the **Macro Library Manager**: add macros, remove them, edit the description shown in the panel, **Importar Config** (import a configuration file) and **Reset ao Padrão** (restore the default set). Import and reset roll back automatically if something fails.
+- The panel and the manager stay in sync with the compendium: any change, including edits made directly in the Foundry compendium window, updates open JSD windows within a moment.
+
+### Settings
+
+| Setting | Description |
+|---------|-------------|
+| **Macro Library Panel** | Shows the JSD Panel icon, with the Darkness Level and Macro Library buttons. **World setting.** Requires reload. |
+
+Note: if this setting is off, the JSD Panel icon is still created for GMs when another feature needs it (for example the *Readable names* button).
 
 ---
 
