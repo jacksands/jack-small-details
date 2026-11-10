@@ -23,6 +23,7 @@ import { GMVisionFeature        } from "./features/gm-vision.mjs";
 import { TextSpacingFixFeature  } from "./features/text-spacing-fix.mjs";
 import { StatusSortFeature      } from "./features/status-sort.mjs";
 import { MacroLibraryFeature    } from "./features/macro-library.mjs";
+import { BroadcastFeature       } from "./features/broadcast.mjs";
 import { InstructionsViewer     } from "./apps/InstructionsViewer.mjs";
 import { registerSettingsDividers } from "./apps/SettingsDividers.mjs";
 
@@ -39,6 +40,7 @@ const FEATURES = [
   TextSpacingFixFeature,
   StatusSortFeature,
   MacroLibraryFeature,
+  BroadcastFeature,
 ];
 // ─────────────────────────────────────────────────────────────────────────────
 

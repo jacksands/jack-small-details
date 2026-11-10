@@ -12,7 +12,6 @@
  * MacroLibraryPanel e MacroLibrarySettings se atualizam automaticamente.
  */
 
-import { DarknessPanel        } from "../apps/DarknessPanel.mjs";
 import { MacroLibraryPanel    } from "../apps/MacroLibraryPanel.mjs";
 import { MacroLibrarySettings } from "../apps/MacroLibrarySettings.mjs";
 
@@ -31,6 +30,16 @@ const _AMBER_ICON_CSS = `
     text-shadow: 0 0 8px rgba(212,165,116,0.35) !important;
   }
 `;
+
+/** Safely get a setting, returning default if feature/module not enabled. */
+function getSetting(key, def) {
+  try { return game.settings.get(MODULE, key); } catch { return def; }
+}
+
+/** Check if a JSD feature is enabled by its setting key prefix. */
+function isFeatureEnabled(settingKey) {
+  try { return game.settings.get(MODULE, settingKey); } catch { return false; }
+}
 
 /**
  * Opens the Foundry SettingsConfig and navigates to the JSD tab.
@@ -201,11 +210,6 @@ export const MacroLibraryFeature = {
   getSceneControlButtons(controls) {
     if (!game.user.isGM) return;
 
-    const updateMode = (() => {
-      try { return game.settings.get(MODULE, "darknessSlider.updateMode"); }
-      catch { return "apply"; }
-    })();
-
     // Merge, don't replace: other JSD features (e.g. File Picker Space Display)
     // register their tools into this group before this feature runs.
     controls["jsd"] = {
@@ -213,17 +217,27 @@ export const MacroLibraryFeature = {
       icon: "fa-solid fa-toolbox", visible: true, tools: controls["jsd"]?.tools ?? {},
     };
 
-    controls["jsd"].tools["jsd-panel-darkness"] = {
-      name: "jsd-panel-darkness", title: game.i18n.localize("JSD.DarknessPanel.Title"),
-      icon: "fa-solid fa-moon-stars", order: 1, button: true, visible: true,
-      onChange: () => {
-        const ex = foundry.applications.instances.get("jsd-darkness-panel");
-        if (ex?.rendered) { ex.close({ animate: false }); return; }
-        if (!canvas.scene) { ui.notifications.warn("No active scene."); return; }
-        const btn = document.querySelector('[data-tool="jsd-panel-darkness"]');
-        new DarknessPanel({ triggerElement: btn, updateMode }).render({ force: true });
-      },
-    };
+    // Only add Darkness Panel tool if Darkness Slider feature is enabled
+    if (isFeatureEnabled("darknessSlider.enabled")) {
+      const updateMode = getSetting("darknessSlider.updateMode", "apply");
+      controls["jsd"].tools["jsd-panel-darkness"] = {
+        name: "jsd-panel-darkness", title: game.i18n.localize("JSD.DarknessPanel.Title"),
+        icon: "fa-solid fa-moon-stars", order: 1, button: true, visible: true,
+        onChange: () => {
+          const ex = foundry.applications.instances.get("jsd-darkness-panel");
+          if (ex?.rendered) { ex.close({ animate: false }); return; }
+          if (!canvas.scene) { ui.notifications.warn("No active scene."); return; }
+          const btn = document.querySelector('[data-tool="jsd-panel-darkness"]');
+          // Dynamic import to avoid hard dependency on DarknessPanel class
+          import("../apps/DarknessPanel.mjs").then(({ DarknessPanel }) => {
+            new DarknessPanel({ triggerElement: btn, updateMode }).render({ force: true });
+          }).catch(err => {
+            console.error("[JSD] Failed to load DarknessPanel:", err);
+            ui.notifications.error("Darkness Panel unavailable.");
+          });
+        },
+      };
+    }
 
     controls["jsd"].tools["jsd-macro-lib"] = {
       name: "jsd-macro-lib", title: game.i18n.localize("JSD.MacroLib.PanelTitle"),
