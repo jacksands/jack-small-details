@@ -63,7 +63,7 @@ const COPIED_CLASS = "jsd-fpsd-copied";
 const SCROLLING_CLASS = "jsd-fpsd-scrolling";
 const TEXT_INPUT_TYPES = new Set(["", "text", "search"]);
 const HTML_SIGNIFICANT = /[<>&]/;
-const ON_COLOR = "#2ecc71";
+const ON_COLOR = "#6fcf97"; // Modern --success
 const HINT_THROTTLE_MS = 4000;
 let lastHintAt = 0;
 

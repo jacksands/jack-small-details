@@ -17,6 +17,7 @@ A personal collection of small quality-of-life improvements for Foundry VTT V14.
 - [Fix Blank Line Spacing](#fix-blank-line-spacing)
 - [Sort Status Effects](#sort-status-effects)
 - [JSD Panel and Macro Library](#jsd-panel-and-macro-library)
+- [Broadcast](#broadcast)
 
 ---
 
@@ -295,7 +296,7 @@ Sorts the status effects palette of the **Token HUD** alphabetically.
 
 ## JSD Panel and Macro Library
 
-GM only. A **toolbox icon** (amber) in the Scene Controls opens the **JSD Panel**: a group of quick-access buttons for this module, in this order:
+GM only. A **toolbox icon** (terracotta orange) in the Scene Controls opens the **JSD Panel**: a group of quick-access buttons for this module, in this order:
 
 | Button | What it does |
 |--------|--------------|
@@ -309,7 +310,7 @@ GM only. A **toolbox icon** (amber) in the Scene Controls opens the **JSD Panel*
 ### Macro Library
 
 - The module ships with its own compendium (**JSD — Macro Library**). On first load it is filled with the default macros: *Item to Journal*, *Lock Token Rotation*, *Mass Scene Editor*, *Ownership Manager*, *Scene & Door Control*, *Scene Rescaler* and *Hide Camera Bar*.
-- **Settings → Jack Small Details → Manage Macro Library** (GM only) opens the **Macro Library Manager**: add macros, remove them, edit the description shown in the panel, **Importar Config** (import a configuration file) and **Reset ao Padrão** (restore the default set). Import and reset roll back automatically if something fails.
+- **Settings → Jack Small Details → Manage Macro Library** (GM only) opens the **Macro Library Manager**: add macros, remove them, edit the description shown in the panel, **Exportar Config** (save the library configuration to a file), **Importar Config** (load one) and **Reset ao Padrão** (restore the default set). Import and reset roll back automatically if something fails.
 - The panel and the manager stay in sync with the compendium: any change, including edits made directly in the Foundry compendium window, updates open JSD windows within a moment.
 
 ### Settings
@@ -319,6 +320,29 @@ GM only. A **toolbox icon** (amber) in the Scene Controls opens the **JSD Panel*
 | **Macro Library Panel** | Shows the JSD Panel icon, with the Darkness Level and Macro Library buttons. **World setting.** Requires reload. |
 
 Note: if this setting is off, the JSD Panel icon is still created for GMs when another feature needs it (for example the *Readable names* button).
+
+---
+
+## Broadcast
+
+Infrastructure for macros: lets a macro show a window on the screens of other connected users (for example GM to players). It does nothing by itself; macros that support it have an **Exibir para Conectados** button.
+
+- Windows shown this way are **read-only** for the receivers.
+- Sending again from the same macro updates the already open window instead of opening another one.
+- Receivers can close the window at any time.
+
+### Settings
+
+| Setting | Description |
+|---------|-------------|
+| **Broadcast** | Enable or disable the feature. World setting. Requires reload. |
+| **Broadcast: accept windows from** | **GM only** (default) or **Any connected user**. Switch to "Any connected user" only if you have a player-side macro that needs to show something to others. |
+
+### Notes
+
+- Only active users receive it. Someone who connects later does not get windows sent earlier.
+- Macros that use `attachButton` (v1.9.0) get a small broadcast icon in the window header. Clicking it sends a read-only snapshot of the window as it is at that moment; click again to refresh it for the others.
+- Macro authors: see section 10 of `technical-instructions.md` for the code new macros must include.
 
 ---
 

@@ -239,10 +239,10 @@ export class MacroLibrarySettings extends ApplicationV2 {
             await macro.setFlag(MODULE, "description", newDesc);
             // Update the tracked original so a second blur is a no-op.
             descEl.dataset.original = newDesc;
-            // Visual confirmation: brief amber flash.
+            // Visual confirmation: brief accent flash.
             // The updateMacro hook (fired by setFlag) will also trigger a
             // debounced re-render of this settings window in ~300 ms.
-            descEl.style.setProperty("background", "rgba(212,165,116,0.25)");
+            descEl.style.setProperty("background", "rgba(217,119,87,0.25)");
             descEl.style.setProperty("border-radius", "4px");
             setTimeout(() => {
               descEl.style.removeProperty("background");

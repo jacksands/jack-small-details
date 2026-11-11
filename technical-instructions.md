@@ -435,7 +435,131 @@ DevTools → Performance Monitor / Memory tab, watch listener count and JS
 heap size over a session with only this module enabled vs. others
 disabled one at a time.
 
-## 10. File Picker Folder Filter (`file-picker-folder-filter.mjs`)
+## 10. Broadcast: showing macro windows to other connected users (v1.8.0)
+
+`scripts/features/broadcast.mjs`. Lets any macro show a **read-only snapshot
+window** to other connected users (GM to players, player to GM, anyone to
+anyone). Reusable by every future macro.
+
+### Why it lives in the module, not in the macro
+
+A macro only runs on the client of whoever clicked it, and a
+`game.socket.on` inside a macro only exists on that client. JSD runs on every
+client, so JSD owns the listener. The sender sends **data** (html + css strings),
+never code; the receiver renders it in a generic `BroadcastWindow`.
+`module.json` must keep `"socket": true`. Foundry only relays
+`module.<id>` events, so all JSD socket features share the channel
+`module.jack-small-details` and must tag messages with their own `feature`
+field (this one uses `"broadcast"`).
+
+### Contract every macro must follow to get an "Exibir para Conectados" button
+
+1. Build the window body as a function that can render in **read-only mode**
+   (no action buttons, inputs `disabled`, no `<form>` wrapper: `<form>` and
+   everything inside it is removed by the sanitizer). The receiver gets a static
+   snapshot, it cannot click anything.
+2. Write CSS **without a root prefix**. JSD wraps it as `#<window-id>{ ... }`
+   using native CSS nesting. Consequences: no `@keyframes` / `@font-face` in
+   broadcast CSS (dropped by the browser); put animations inline if needed.
+3. Escape every user-typed string interpolated into HTML
+   (`bc.esc(value)`), on both the GM window and the snapshot.
+4. Use a **stable `id`**. Sending again with the same `id` updates the open
+   window instead of opening a second one.
+5. Guard for JSD being absent or Broadcast disabled.
+
+Copy-paste block (macro side):
+
+```js
+// ── Broadcast (JSD) ──────────────────────────────────────────────
+const getBC = () => game.modules.get("jack-small-details")?.api?.broadcast;
+
+function exibirParaConectados(html, css) {
+  const bc = getBC();
+  if (!bc) return ui.notifications.warn("JSD Broadcast indisponivel (modulo desativado ou Broadcast desligado).");
+  bc.show(
+    { id: "meu-macro-preview", title: "Meu Macro: Previa", html, css, width: 560 },
+    { to: "all" }            // "all" | "gm" | "players" | ["userId", ...]
+  );
+}
+// Botao no HTML do painel do emissor:
+//   <button type="button" id="mm-btn-exibir">Exibir para Conectados</button>
+// Listener (no _onRender / _ligar):
+//   root.querySelector("#mm-btn-exibir")?.addEventListener("click", () =>
+//     exibirParaConectados(this._buildBody({ readOnly: true }), CSS_JANELA));
+```
+
+API (`game.modules.get("jack-small-details").api.broadcast`):
+
+| Call | Effect |
+|------|--------|
+| `show(payload, { to, local })` | Opens/updates the window on targets. `local: true` also opens it on the sender. Targets never include the sender (Foundry does not echo sockets). |
+| `close(id, { to, local })` | Closes the window with that `id` on targets. |
+| `esc(text)` | HTML-escape helper. |
+
+`payload`: `{ id, html, css?, title?, width?, height?, padding? }`
+(`padding` is the CSS padding of `.window-content`, default `"0"`).
+
+### Security notes (do not weaken)
+
+- The receiver sanitizes html (removes `script/style/iframe/object/embed/link/meta/base/form/template`,
+  every `on*` attribute, `data-action`, `javascript:` URLs) and strips `@import` from css.
+  `<style>` inside `html` is dropped on purpose: pass css via `payload.css`.
+- Target filtering is **client-side**. The payload reaches every client.
+  Never broadcast information a player must not see.
+- `senderId` is not authenticated by Foundry. Setting `broadcast.acceptFrom`
+  (`gm` default / `anyone`) is a convenience filter, not a security boundary.
+  If `gm`, player-sent windows are dropped and the sender gets a warning.
+- Limit: 400 000 characters of html+css per message.
+
+### Known limitations
+
+- Snapshot only: receivers cannot interact. Live two-way interaction would need
+  a registered handler on the receiver side (not implemented).
+- If a window is closed by a receiver, the next `show` with the same `id`
+  reopens it.
+
+
+### 10.1 Adapting an existing macro with one line (v1.9.0): `attachButton`
+
+For macros that already have a window, do NOT rewrite the template. Add one call
+and JSD puts a "Mostrar aos Conectados" icon in the window header. On click it
+snapshots the window **as it is on screen at that moment** (typed values,
+selected options, checked boxes, computed text) and shows it read-only to the
+others. Clicking again re-sends and updates the same window (not real time).
+
+```js
+game.modules.get("jack-small-details")?.api?.broadcast?.attachButton?.(el, {
+  id: "minha-macro-broadcast",          // stable id (optional, defaults to snap-<frame id>)
+  hide: ["#btn-rolar", "#btn-chat"],    // action elements removed from the snapshot
+  styles: ["id-do-style-no-head"],      // <style id> in document.head to include (optional)
+});
+```
+
+Where `el` and the call go:
+
+| Window type | Where | `el` |
+|---|---|---|
+| ApplicationV2 | inside `_replaceHTML(result, content)`, right after the content is set | `content` |
+| DialogV2 | inside the `render: (_ev, dialog) => {}` callback | `dialog.element` |
+| Legacy `new Dialog` | inside `render: (html) => {}` | `html[0]` |
+
+The call is idempotent and optional-chained, so the macro keeps working when JSD
+is absent or older (it just has no button).
+
+What `snapshot()` does automatically: bakes live control values into attributes;
+unwraps `<form>`; removes footers (`footer`, `.form-footer`, `.dialog-buttons`)
+and anything in `hide`; disables every remaining control; moves `<style>` found in
+the content, plus the head styles in `styles`, into `css`; rewrites selectors that
+target the window frame (`#frame-id`, frame-only classes such as `.hpc-window`,
+`:root`) to `&` so they apply to the receiver's window.
+
+Limits: tooltips and any JS-driven behavior do not exist on the receiver;
+`@keyframes` are dropped; the window shows the DOM, so anything hidden by JS only
+(not by CSS or the `hidden` attribute) is still sent.
+
+---
+
+## 11. File Picker Folder Filter (`file-picker-folder-filter.mjs`)
 
 Second filter field in the core `FilePicker` (ApplicationV2, id `file-picker`,
 parts `tabs`, `subheader`, `body`, `subfooter`, `footer`, all confirmed from a
@@ -468,7 +592,7 @@ Design notes:
   the same lists after the core render. If hidden folders reappear, add a
   `MutationObserver` on `ul.directory` that calls `applyFilter`.
 
-## 11. File Picker Space Display (`file-picker-space-display.mjs`)
+## 12. File Picker Space Display (`file-picker-space-display.mjs`)
 
 Visual-only decoding of URL-encoded text (`%20`, `%C3%87`, `%5B`...) via
 `scripts/utils/percent-decode.mjs`. Two mechanisms:
@@ -587,11 +711,11 @@ across themes. The first render logs
 If `M` is 0 in a window showing encoded text in a path field, the field is not an
 `<input>` inside `<file-picker>`.
 
-The folder filter (section 10) runs the same decoder when matching.
+The folder filter (section 11) runs the same decoder when matching.
 
-## 12. History: v1.9.x (GM Clear Vision on levels, File Picker features)
+## 13. History: v1.9.x (GM Clear Vision on levels, File Picker features)
 
-Everything below is also described in sections 10 and 11 (File Picker) and in
+Everything below is also described in sections 11 and 12 (File Picker) and in
 `INSTRUCTIONS.md`; this is the index of what changed since 1.7.0.
 
 - **GM Clear Vision and V14 Levels (`gm-vision.mjs`).** The `Token#isVisible`
@@ -610,12 +734,64 @@ Everything below is also described in sections 10 and 11 (File Picker) and in
   hole or surface edge (core's own cull is undocumented, so this rule was fitted
   to observed `Token#visible` values). Any error falls back to "not covered"
   with a `console.warn`.
-- **File Picker Folder Filter** (section 10) and **File Picker: Readable Names**
-  (section 11, decoder in `scripts/utils/percent-decode.mjs`).
+- **File Picker Folder Filter** (section 11) and **File Picker: Readable Names**
+  (section 12, decoder in `scripts/utils/percent-decode.mjs`).
 - **JSD Panel merge.** `macro-library.mjs` no longer replaces `controls.jsd`; it
-  merges the tools other features registered before it (section 11).
+  merges the tools other features registered before it (section 12).
 - **Version** is declared in `module.json` (`1.9.2`). The `vX.Y.Z` strings in the
   headers of `macro-library.mjs`, `MacroLibrarySettings.mjs`, `MacroLibraryPanel.mjs`
   and `DarknessPanel.mjs` are per-file history markers and are intentionally not
   tied to the module version.
 
+### v1.9.3 / v1.9.4: what happened and what was decided
+
+- **Broadcast was silently unregistered in 1.9.1-1.9.2.** The partial zips of those
+  releases were built from a stale copy of the tree, so their `main.mjs`, `lang/en.json`
+  and `module.json` overwrote the versions that had the Broadcast wiring. Symptom in
+  macros: "JSD Broadcast indisponivel". `broadcast.mjs` itself was intact. 1.9.3 restored
+  the three pieces (import + `FEATURES` entry in `main.mjs`, `"socket": true` in
+  `module.json`, the six `JSD.Settings.Broadcast.*` strings). **Rule for any future
+  partial zip: diff every shared file (`main.mjs`, `lang/en.json`, `module.json`,
+  docs, CSS) against the user's CURRENT tree before shipping it.**
+- **1.9.3 audit.** Kept: the Broadcast restoration. Reverted: the change in
+  `macro-library.mjs` that added the Darkness tool only when `darknessSlider.enabled` and
+  loaded `DarknessPanel` with a dynamic import. Its premise was wrong: every feature's
+  settings are registered at `init` whether or not the feature is enabled, so the old
+  `try/catch` never fired, the tool worked, and the static import was never a hard
+  dependency. The change only made the JSD Panel's Darkness button disappear for people
+  who turned the Lighting-layer slider off. The Darkness button is part of the JSD Panel
+  and is unconditional again.
+- **Modern theme (1.9.4).** `styles/jack-small-details.css` was rewritten to the Modern
+  palette of `UI_Modern.md` (see section 14). The 1.9.3 changelog claimed an Amber to
+  variables migration, but the Darkness panel's toggles, Fog dropdown, the settings
+  dividers and the sidebar icon still used literal Amber hexes.
+- Per-file headers (`v1.7.x`) are history markers, not the module version, which is the
+  single value in `module.json`.
+
+## 14. Modern theme and CSS conventions (v1.9.4)
+
+- **One variable block, on component roots.** `--jsd-*` variables are defined once on
+  `#jsd-darkness-panel, #jsd-macro-lib-panel, #jsd-instructions, #jsd-mls-root,
+  .jsd-settings-divider` and never on `:root` (nothing leaks into Foundry's UI or
+  outlives a window). The names follow `UI_Modern.md` with the `jsd-` prefix. A new
+  window that needs the theme: add its root selector to that block.
+- **Palette and shape:** charcoal backgrounds (`--jsd-bg-*`), terracotta accent, 1px
+  borders, radii 6/8/10/14px, solid colours (no gradients), sentence-case titles at
+  weight 650 with `letter-spacing: -0.2px`, primary button `--jsd-btn-primary-bg` with
+  white text.
+- **Accent contrast rule:** `--jsd-accent` is for borders, focus rings, chip and track
+  fills. Small accent *text* uses `--jsd-accent-text`. Use `--jsd-fg-muted`, not
+  `--jsd-fg-faint`, on `--jsd-bg-tertiary`.
+- **State colours:** active toggles (GM Clear Vision eye, readable-names icon) use
+  `--success` (`#6fcf97`). The readable-names button also paints this inline from
+  JavaScript (section 12), so keep `ON_COLOR` in `file-picker-space-display.mjs` in sync
+  with it. The Broadcast header icon uses `--warning` (`#e6b450`, `BCAST_ICON_COLOR`).
+- **Elements that live outside our windows** cannot rely on the variable block:
+  the JSD Panel button in Scene Controls (colour injected by `macro-library.mjs`, in V14
+  the control button *is* the icon, there is no child `<i>`), the Journal Scaler badge
+  inside third-party journal sheets (inline styles in `indicator.js`), and the
+  MacroLibrarySettings description flash. Their colours are Modern literals; change
+  them together with the block above.
+- Selectors for ids that exist only in our windows are not prefixed further; classes
+  unique to the module (`.jsd-*`) are safe globally. Core-owned elements are always
+  matched through a unique `data-tool` / `data-control` attribute.

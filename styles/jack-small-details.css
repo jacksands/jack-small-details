@@ -1,30 +1,67 @@
-/* Jack Small Details — Amber theme variables (shared by panels)
-   Per UI_Modern.md: define on component roots, not :root, to avoid leakage. */
+/* ═══════════════════════════════════════════════════════════════════════════
+   Jack Small Details — Modern theme (UI_Modern.md)
+
+   Warm charcoal with a terracotta accent, 1px borders, rounded corners, no
+   heavy gradients, sentence-case titles (weight 650).
+
+   Variables are defined on each component ROOT (window / panel id), never on
+   :root, so the theme cannot leak into the rest of Foundry's UI or outlive the
+   window. All roots share this one block. To retheme, change the values here.
+   Contrast (WCAG AA 4.5:1) follows the table in UI_Modern.md: --jsd-accent is for
+   borders, focus and chip backgrounds; small accent text uses --jsd-accent-text.
+   ═══════════════════════════════════════════════════════════════════════════ */
 #jsd-darkness-panel,
 #jsd-macro-lib-panel,
-#jsd-instructions {
-  --jsd-bg-primary:     #1e1812;
-  --jsd-bg-secondary:   #261e14;
-  --jsd-bg-tertiary:    #3a2a1a;
-  --jsd-bg-dark:        #1a1410;
-  --jsd-bg-header:      #3a2510;
-  --jsd-fg-primary:     #f5e6d3;
-  --jsd-fg-bright:      #f5d9a8;
-  --jsd-fg-muted:       #c9a876;
-  --jsd-fg-dim:         #7a6040;
-  --jsd-accent:         #d4a574;
-  --jsd-accent-hover:   #e8c090;
-  --jsd-accent-soft:    rgba(212,165,116,0.18);
-  --jsd-border:         #4a3a28;
-  --jsd-border-light:   #6a4a2a;
-  --jsd-shadow:         0 6px 24px rgba(0,0,0,0.65);
-  --jsd-shadow-accent:  0 0 0 1px rgba(212,165,116,0.18);
-  --jsd-radius:         10px;
-  --jsd-font:           'Segoe UI', Tahoma, Geneva, sans-serif;
-  --jsd-success:        #2ecc71;
-  --jsd-error:          #e84030;
-  --jsd-warning:        #e8a030;
+#jsd-instructions,
+#jsd-mls-root,
+.jsd-settings-divider {
+  /* Backgrounds */
+  --jsd-bg-primary:   #262624;
+  --jsd-bg-secondary: #30302e;
+  --jsd-bg-tertiary:  #3a3937;
+  --jsd-bg-dark:      #1f1e1d;
+  /* Text */
+  --jsd-fg-primary:   #faf9f5;
+  --jsd-fg-secondary: #e4e2d8;
+  --jsd-fg-muted:     #b9b7ab;
+  --jsd-fg-faint:     #a09e94;   /* use --jsd-fg-muted on --jsd-bg-tertiary */
+  --jsd-fg-bright:    #ffffff;
+  /* Accent (terracotta) */
+  --jsd-accent:           #d97757;
+  --jsd-accent-secondary: #c6613f;
+  --jsd-accent-hover:     #e08a6d;
+  --jsd-accent-soft:      rgba(217, 119, 87, 0.16);
+  --jsd-accent-text:      #f3b9a4;
+  /* Primary button: darker fill so white text passes AA */
+  --jsd-btn-primary-bg:    #b5532f;
+  --jsd-btn-primary-hover: #a24a29;
+  --jsd-btn-danger-bg:     #b4412f;
+  --jsd-btn-danger-hover:  #9c3626;
+  /* Borders */
+  --jsd-border:           #44423e;
+  --jsd-border-secondary: #3a3937;
+  --jsd-border-accent:    #5a5853;
+  /* States */
+  --jsd-success:  #6fcf97;
+  --jsd-warning:  #e6b450;
+  --jsd-error:    #f47f72;
+  --jsd-info:     #7aa7d9;
+  --jsd-error-bg: #3f2623;
+  /* Shadows and focus */
+  --jsd-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --jsd-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --jsd-shadow-lg: 0 6px 18px rgba(0, 0, 0, 0.45);
+  --jsd-focus-ring: 0 0 0 3px rgba(217, 119, 87, 0.30);
+  /* Radii */
+  --jsd-radius-sm: 6px;
+  --jsd-radius-md: 8px;
+  --jsd-radius-lg: 10px;
+  --jsd-radius-xl: 14px;
+  /* Typeface */
+  --jsd-font: 'Segoe UI', system-ui, Tahoma, sans-serif;
 }
+
+/* ── DarknessPanel (frameless, anchored to the JSD Panel button) ────────────── */
 
 @keyframes jsd-slide-in {
   from { opacity: 0; transform: translateX(-8px); }
@@ -33,10 +70,10 @@
 
 #jsd-darkness-panel {
   animation: jsd-slide-in 0.14s ease-out;
-  background: linear-gradient(150deg, var(--jsd-bg-primary) 0%, var(--jsd-bg-secondary) 100%);
-  border: 2px solid var(--jsd-border);
-  border-radius: var(--jsd-radius);
-  box-shadow: var(--jsd-shadow), var(--jsd-shadow-accent);
+  background: var(--jsd-bg-primary);
+  border: 1px solid var(--jsd-border);
+  border-radius: var(--jsd-radius-lg);
+  box-shadow: var(--jsd-shadow-lg);
   color: var(--jsd-fg-primary);
   font-family: var(--jsd-font);
   font-size: 13px;
@@ -48,23 +85,23 @@
 
 #jsd-darkness-panel .jsd-panel-header {
   align-items: center;
-  background: linear-gradient(135deg, var(--jsd-bg-header), var(--jsd-bg-dark));
-  border-bottom: 2px solid var(--jsd-accent);
+  background: var(--jsd-bg-dark);
+  border-bottom: 1px solid var(--jsd-border);
   display: flex;
-  gap: 7px;
+  gap: 8px;
   padding: 9px 12px 9px 14px;
 }
-#jsd-darkness-panel .jsd-panel-header > i { color: var(--jsd-accent); font-size: 13px; flex-shrink: 0; }
+#jsd-darkness-panel .jsd-panel-header > i { color: var(--jsd-accent-text); font-size: 13px; flex-shrink: 0; }
 #jsd-darkness-panel .jsd-panel-title {
-  color: var(--jsd-fg-bright); font-size: 11px; font-weight: 800;
-  letter-spacing: 1.8px; text-transform: uppercase; white-space: nowrap;
+  color: var(--jsd-fg-primary); font-size: 12px; font-weight: 650;
+  letter-spacing: -0.2px; white-space: nowrap;
 }
 #jsd-darkness-panel .jsd-scene-name {
   color: var(--jsd-fg-muted); flex: 1; font-size: 11px; min-width: 0;
   overflow: hidden; text-align: right; text-overflow: ellipsis; white-space: nowrap;
 }
 #jsd-darkness-panel .jsd-close-btn {
-  background: none; border: none; border-radius: 5px; color: var(--jsd-fg-dim);
+  background: none; border: none; border-radius: var(--jsd-radius-sm); color: var(--jsd-fg-muted);
   cursor: pointer; flex-shrink: 0; font-size: 12px; line-height: 1; padding: 3px 5px;
   transition: background 0.12s, color 0.12s;
 }
@@ -79,111 +116,142 @@
   accent-color: var(--jsd-accent); cursor: pointer; flex: 1; height: 4px; -webkit-appearance: none;
 }
 #jsd-darkness-panel .jsd-slider::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, var(--jsd-accent), var(--jsd-bg-tertiary)); border-radius: 2px; height: 4px;
+  background: var(--jsd-bg-tertiary); border-radius: 2px; height: 4px;
 }
 #jsd-darkness-panel .jsd-slider::-webkit-slider-thumb {
   -webkit-appearance: none; background: var(--jsd-accent); border: 2px solid var(--jsd-bg-primary);
   border-radius: 50%; box-shadow: 0 0 0 1px var(--jsd-accent); height: 16px; margin-top: -6px;
   transition: box-shadow 0.12s; width: 16px;
 }
-#jsd-darkness-panel .jsd-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 0 3px rgba(212,165,116,0.4);
-}
+#jsd-darkness-panel .jsd-slider::-webkit-slider-thumb:hover { box-shadow: var(--jsd-focus-ring); }
 #jsd-darkness-panel .jsd-slider::-moz-range-track {
-  background: linear-gradient(90deg, var(--jsd-accent), var(--jsd-bg-tertiary)); border-radius: 2px; height: 4px;
+  background: var(--jsd-bg-tertiary); border-radius: 2px; height: 4px;
 }
 #jsd-darkness-panel .jsd-slider::-moz-range-thumb {
   background: var(--jsd-accent); border: 2px solid var(--jsd-bg-primary); border-radius: 50%; height: 12px; width: 12px;
 }
 
 #jsd-darkness-panel .jsd-value-input {
-  background: var(--jsd-bg-dark); border: 1px solid var(--jsd-border-light); border-radius: 6px; color: var(--jsd-fg-primary);
-  font-size: 12px; font-weight: 700; padding: 4px 6px; text-align: center; width: 58px;
-  transition: border-color 0.12s;
+  background: var(--jsd-bg-dark); border: 1px solid var(--jsd-border); border-radius: var(--jsd-radius-sm);
+  color: var(--jsd-fg-primary); font-size: 12px; font-weight: 650; padding: 4px 6px;
+  text-align: center; width: 58px; transition: border-color 0.12s, box-shadow 0.12s;
 }
-#jsd-darkness-panel .jsd-value-input:focus { border-color: var(--jsd-accent); outline: none; }
+#jsd-darkness-panel .jsd-value-input:focus {
+  border-color: var(--jsd-accent); box-shadow: var(--jsd-focus-ring); outline: none;
+}
 #jsd-darkness-panel .jsd-value-input::-webkit-outer-spin-button,
 #jsd-darkness-panel .jsd-value-input::-webkit-inner-spin-button { -webkit-appearance: none; }
 #jsd-darkness-panel .jsd-value-input[type=number] { -moz-appearance: textfield; }
 
+/* Darkness preview: the filled part is the "dark" share of the scene. */
 #jsd-darkness-panel .jsd-darkness-bar {
-  background: #2a243a; border: 1px solid #3a3050; border-radius: 6px; height: 10px; overflow: hidden;
+  background: var(--jsd-bg-tertiary); border: 1px solid var(--jsd-border);
+  border-radius: var(--jsd-radius-sm); height: 10px; overflow: hidden;
 }
 #jsd-darkness-panel .jsd-darkness-fill {
-  background: linear-gradient(90deg, #180c28 0%, #0a0416 100%);
-  border-radius: 6px; height: 100%; transition: width 0.08s ease;
+  background: #141413; border-radius: var(--jsd-radius-sm); height: 100%; transition: width 0.08s ease;
 }
 
 #jsd-darkness-panel .jsd-panel-footer { display: flex; gap: 8px; padding-top: 2px; }
 #jsd-darkness-panel .jsd-btn {
-  border: none; border-radius: 6px; cursor: pointer; flex: 1;
-  font-size: 12px; font-weight: 800; letter-spacing: 0.4px; padding: 7px 10px; transition: all 0.12s;
+  border: none; border-radius: var(--jsd-radius-md); cursor: pointer; flex: 1;
+  font-size: 12px; font-weight: 650; padding: 7px 10px; transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
 #jsd-darkness-panel .jsd-btn-apply {
-  background: linear-gradient(135deg, var(--jsd-accent), var(--jsd-accent-hover));
-  box-shadow: 0 2px 6px rgba(212,165,116,0.35); color: var(--jsd-bg-dark);
+  background: var(--jsd-btn-primary-bg); box-shadow: var(--jsd-shadow-sm); color: var(--jsd-fg-bright);
 }
-#jsd-darkness-panel .jsd-btn-apply:hover {
-  background: linear-gradient(135deg, var(--jsd-accent-hover), var(--jsd-accent));
-  box-shadow: 0 3px 10px rgba(212,165,116,0.5); transform: translateY(-1px);
-}
-#jsd-darkness-panel .jsd-btn-apply:active { transform: translateY(0); }
+#jsd-darkness-panel .jsd-btn-apply:hover { background: var(--jsd-btn-primary-hover); }
 #jsd-darkness-panel .jsd-btn-cancel {
-  background: var(--jsd-bg-dark); border: 1px solid var(--jsd-border-light); color: var(--jsd-fg-muted);
+  background: var(--jsd-bg-dark); border: 1px solid var(--jsd-border-accent); color: var(--jsd-fg-muted);
 }
 #jsd-darkness-panel .jsd-btn-cancel:hover { background: var(--jsd-bg-tertiary); color: var(--jsd-fg-bright); }
 
-/* ── InstructionsViewer ───────────────────────────────────────────────────── */
-
-#jsd-instructions {
-  --jsd-bg-primary:     #1e1812;
-  --jsd-bg-secondary:   #261e14;
-  --jsd-bg-tertiary:    #3a2a1a;
-  --jsd-bg-dark:        #1a1410;
-  --jsd-fg-primary:     #f5e6d3;
-  --jsd-fg-bright:      #f5d9a8;
-  --jsd-fg-muted:       #c9a876;
-  --jsd-fg-dim:         #7a6040;
-  --jsd-accent:         #d4a574;
-  --jsd-accent-hover:   #e8c090;
-  --jsd-border:         #4a3a28;
-  --jsd-font:           'Segoe UI', Tahoma, sans-serif;
+/* Extra controls under the darkness bar (Token Vision / Global Light / Fog Exploration) */
+#jsd-darkness-panel .jsd-extra-controls {
+  border-top: 1px solid var(--jsd-border);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 6px;
+  padding: 8px 14px 4px;
 }
+#jsd-darkness-panel .jsd-extra-row { align-items: center; display: flex; gap: 8px; }
+#jsd-darkness-panel .jsd-extra-label { color: var(--jsd-fg-muted); flex: 1; font-size: 11px; user-select: none; }
+
+/* Toggle switch */
+#jsd-darkness-panel .jsd-toggle {
+  align-items: center; background: none; border: none; cursor: pointer;
+  display: flex; flex-shrink: 0; gap: 5px; padding: 0;
+}
+#jsd-darkness-panel .jsd-toggle-track {
+  background: var(--jsd-bg-tertiary); border: 1px solid var(--jsd-border-accent); border-radius: 9px;
+  flex-shrink: 0; height: 18px; position: relative; transition: background 0.18s, border-color 0.18s; width: 32px;
+}
+#jsd-darkness-panel .jsd-toggle.on .jsd-toggle-track {
+  background: var(--jsd-accent); border-color: var(--jsd-accent-hover);
+}
+#jsd-darkness-panel .jsd-toggle-thumb {
+  background: var(--jsd-fg-muted); border-radius: 50%; height: 12px; left: 2px; pointer-events: none;
+  position: absolute; top: 2px; transition: left 0.18s, background 0.18s; width: 12px;
+}
+#jsd-darkness-panel .jsd-toggle.on .jsd-toggle-thumb { background: var(--jsd-bg-dark); left: 16px; }
+#jsd-darkness-panel .jsd-toggle-state {
+  color: var(--jsd-fg-faint); font-size: 10px; font-weight: 650; min-width: 22px;
+  text-align: left; transition: color 0.18s;
+}
+#jsd-darkness-panel .jsd-toggle.on .jsd-toggle-state { color: var(--jsd-accent-text); }
+#jsd-darkness-panel .jsd-toggle:hover .jsd-toggle-track { border-color: var(--jsd-accent); }
+#jsd-darkness-panel .jsd-toggle:not(.on):hover .jsd-toggle-state { color: var(--jsd-fg-muted); }
+
+/* Fog Exploration dropdown */
+#jsd-darkness-panel .jsd-fog-select {
+  background: var(--jsd-bg-secondary); border: 1px solid var(--jsd-border); border-radius: var(--jsd-radius-sm);
+  color: var(--jsd-fg-primary); cursor: pointer; flex: 1; font-size: 11px; padding: 3px 6px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+#jsd-darkness-panel .jsd-fog-select:hover { border-color: var(--jsd-border-accent); }
+#jsd-darkness-panel .jsd-fog-select:focus {
+  border-color: var(--jsd-accent); box-shadow: var(--jsd-focus-ring); outline: none;
+}
+#jsd-darkness-panel .jsd-fog-select option { background: var(--jsd-bg-secondary); color: var(--jsd-fg-primary); }
+
+/* ── InstructionsViewer ─────────────────────────────────────────────────────── */
 
 #jsd-instructions .window-content {
+  background: var(--jsd-bg-primary);
   padding: 0;
   overflow-y: auto;
 }
 
 #jsd-instructions-body {
   padding: 20px 28px 28px;
-  color: var(--jsd-fg-primary);
+  color: var(--jsd-fg-secondary);
   font-family: var(--jsd-font);
   font-size: 13px;
   line-height: 1.6;
 }
 
 #jsd-instructions-body h1 {
-  font-size: 20px; font-weight: 900; letter-spacing: 1.5px;
-  color: var(--jsd-fg-bright); text-transform: uppercase;
-  border-bottom: 3px solid var(--jsd-accent);
+  font-size: 20px; font-weight: 650; letter-spacing: -0.2px;
+  color: var(--jsd-fg-bright);
+  border-bottom: 1px solid var(--jsd-border);
   padding-bottom: 8px; margin: 24px 0 16px;
 }
 #jsd-instructions-body h1:first-child { margin-top: 4px; }
 
 #jsd-instructions-body h2 {
-  font-size: 15px; font-weight: 800; letter-spacing: 1px;
-  color: var(--jsd-accent); text-transform: uppercase;
+  font-size: 15px; font-weight: 650; letter-spacing: -0.2px;
+  color: var(--jsd-accent-text);
   border-bottom: 1px solid var(--jsd-border);
   padding-bottom: 5px; margin: 20px 0 10px;
 }
 
 #jsd-instructions-body h3 {
-  font-size: 13px; font-weight: 700; color: var(--jsd-accent-hover);
+  font-size: 13px; font-weight: 650; color: var(--jsd-accent-text);
   margin: 14px 0 6px;
 }
 
-#jsd-instructions-body p { margin: 6px 0; color: var(--jsd-fg-muted); }
+#jsd-instructions-body p { margin: 6px 0; color: var(--jsd-fg-secondary); }
 
 #jsd-instructions-body hr {
   border: none; border-top: 1px solid var(--jsd-border); margin: 18px 0;
@@ -192,60 +260,54 @@
 #jsd-instructions-body ul,
 #jsd-instructions-body ol { margin: 6px 0 6px 20px; padding: 0; }
 
-#jsd-instructions-body li { margin: 3px 0; color: var(--jsd-fg-muted); }
+#jsd-instructions-body li { margin: 3px 0; color: var(--jsd-fg-secondary); }
 
 #jsd-instructions-body code {
-  background: var(--jsd-bg-dark); border: 1px solid var(--jsd-border-light); border-radius: 4px;
-  color: var(--jsd-fg-bright); font-family: 'Consolas', 'Courier New', monospace;
+  background: var(--jsd-bg-dark); border: 1px solid var(--jsd-border); border-radius: 4px;
+  color: var(--jsd-accent-text); font-family: 'Consolas', 'Courier New', monospace;
   font-size: 12px; padding: 1px 5px;
 }
 
 #jsd-instructions-body pre {
-  background: var(--jsd-bg-primary); border: 1px solid var(--jsd-border); border-radius: 7px;
+  background: var(--jsd-bg-dark); border: 1px solid var(--jsd-border); border-radius: var(--jsd-radius-md);
   margin: 10px 0; overflow-x: auto; padding: 12px 16px;
 }
 
 #jsd-instructions-body pre code {
-  background: none; border: none; color: var(--jsd-fg-muted); font-size: 12px; padding: 0;
+  background: none; border: none; color: var(--jsd-fg-secondary); font-size: 12px; padding: 0;
 }
 
 #jsd-instructions-body table { border-collapse: collapse; margin: 10px 0; width: 100%; }
 
 #jsd-instructions-body th {
-  background: var(--jsd-bg-header); color: var(--jsd-fg-bright);
-  font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
+  background: var(--jsd-bg-dark); color: var(--jsd-fg-primary);
+  font-size: 12px; font-weight: 650;
   padding: 7px 12px; text-align: left; border: 1px solid var(--jsd-border);
 }
 
-#jsd-instructions-body td { padding: 6px 12px; color: var(--jsd-fg-muted); border: 1px solid var(--jsd-bg-tertiary); }
+#jsd-instructions-body td { padding: 6px 12px; color: var(--jsd-fg-secondary); border: 1px solid var(--jsd-border-secondary); }
 
-#jsd-instructions-body tr:nth-child(even) td { background: var(--jsd-bg-primary); }
+#jsd-instructions-body tr:nth-child(even) td { background: var(--jsd-bg-secondary); }
 
 #jsd-instructions-body strong { color: var(--jsd-fg-bright); }
 
 /* ── Settings page — feature group dividers (SettingsDividers.mjs) ── */
 
-.jsd-settings-divider {
-  margin: 20px 0 4px;
-}
-
-.jsd-settings-divider:first-child {
-  margin-top: 4px;
-}
+.jsd-settings-divider { margin: 20px 0 4px; }
+.jsd-settings-divider:first-child { margin-top: 4px; }
 
 .jsd-settings-divider hr {
   border: none;
-  border-top: 1px solid #4a3a28;
+  border-top: 1px solid var(--jsd-border);
   margin: 0 0 8px;
 }
 
 .jsd-settings-divider h3 {
   margin: 0 0 2px;
-  color: #d4a574;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  color: var(--jsd-accent-text);
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: -0.2px;
 }
 
 /* ── Settings sidebar — secondary module-name filter (module-filter.mjs) ──
@@ -288,7 +350,7 @@
    while active; Foundry's own core CSS already handles the toggle's
    pressed/highlighted background via the `.active` class on the button. */
 [data-tool="jsd-gm-vision"].jsd-gm-vision-on i {
-  color: #2ecc71;
+  color: #6fcf97;
 }
 
 /* ── Blank line spacing fix (text-spacing-fix.mjs) — Option A ──
@@ -325,10 +387,10 @@ body.jsd-fix-text-spacing .message-content p:has(br:only-child)::before {
 
 #jsd-macro-lib-panel {
   animation: jsd-ml-slide-in 0.14s ease-out;
-  background: linear-gradient(150deg, var(--jsd-bg-primary) 0%, var(--jsd-bg-secondary) 100%);
-  border: 2px solid var(--jsd-border);
-  border-radius: var(--jsd-radius);
-  box-shadow: var(--jsd-shadow), var(--jsd-shadow-accent);
+  background: var(--jsd-bg-primary);
+  border: 1px solid var(--jsd-border);
+  border-radius: var(--jsd-radius-lg);
+  box-shadow: var(--jsd-shadow-lg);
   color: var(--jsd-fg-primary);
   font-family: var(--jsd-font);
   font-size: 13px;
@@ -339,40 +401,40 @@ body.jsd-fix-text-spacing .message-content p:has(br:only-child)::before {
 }
 #jsd-macro-lib-panel .jsd-ml-panel-header {
   align-items: center;
-  background: linear-gradient(135deg, var(--jsd-bg-header), var(--jsd-bg-dark));
-  border-bottom: 2px solid var(--jsd-accent);
-  display: flex; gap: 7px;
+  background: var(--jsd-bg-dark);
+  border-bottom: 1px solid var(--jsd-border);
+  display: flex; gap: 8px;
   padding: 9px 12px 9px 14px;
 }
-#jsd-macro-lib-panel .jsd-ml-panel-header > i { color: var(--jsd-accent); font-size: 13px; flex-shrink: 0; }
+#jsd-macro-lib-panel .jsd-ml-panel-header > i { color: var(--jsd-accent-text); font-size: 13px; flex-shrink: 0; }
 #jsd-macro-lib-panel .jsd-ml-panel-title {
-  color: var(--jsd-fg-bright); font-size: 11px; font-weight: 800;
-  letter-spacing: 1.8px; text-transform: uppercase; flex: 1;
+  color: var(--jsd-fg-primary); font-size: 12px; font-weight: 650;
+  letter-spacing: -0.2px; flex: 1;
 }
 #jsd-macro-lib-panel .jsd-ml-panel-close {
-  background: none; border: none; border-radius: 5px; color: var(--jsd-fg-dim);
+  background: none; border: none; border-radius: var(--jsd-radius-sm); color: var(--jsd-fg-muted);
   cursor: pointer; font-size: 12px; line-height: 1; padding: 3px 5px;
   transition: background 0.12s, color 0.12s; flex-shrink: 0;
 }
 #jsd-macro-lib-panel .jsd-ml-panel-close:hover { background: var(--jsd-accent-soft); color: var(--jsd-fg-bright); }
 #jsd-macro-lib-panel .jsd-ml-panel-body { max-height: 360px; overflow-y: auto; padding: 6px 8px; }
-#jsd-macro-lib-panel .jsd-ml-panel-body::-webkit-scrollbar { width: 5px; }
+#jsd-macro-lib-panel .jsd-ml-panel-body::-webkit-scrollbar { width: 6px; }
 #jsd-macro-lib-panel .jsd-ml-panel-body::-webkit-scrollbar-track { background: var(--jsd-bg-dark); }
-#jsd-macro-lib-panel .jsd-ml-panel-body::-webkit-scrollbar-thumb { background: var(--jsd-border-light); border-radius: 3px; }
+#jsd-macro-lib-panel .jsd-ml-panel-body::-webkit-scrollbar-thumb { background: var(--jsd-border-accent); border-radius: 3px; }
 #jsd-macro-lib-panel .jsd-ml-panel-body::-webkit-scrollbar-thumb:hover { background: var(--jsd-accent); }
 #jsd-macro-lib-panel .jsd-ml-panel-row {
-  align-items: center; border-bottom: 1px solid var(--jsd-bg-tertiary);
+  align-items: center; border-bottom: 1px solid var(--jsd-border-secondary);
   display: flex; gap: 8px; padding: 7px 4px;
 }
 #jsd-macro-lib-panel .jsd-ml-panel-row:last-child { border-bottom: none; }
-#jsd-macro-lib-panel .jsd-ml-panel-row:hover { background: var(--jsd-accent-soft); border-radius: 5px; }
+#jsd-macro-lib-panel .jsd-ml-panel-row:hover { background: var(--jsd-accent-soft); border-radius: var(--jsd-radius-sm); }
 #jsd-macro-lib-panel .jsd-ml-panel-icon {
-  border: 1px solid var(--jsd-border); border-radius: 4px;
+  border: 1px solid var(--jsd-border); border-radius: var(--jsd-radius-sm);
   flex-shrink: 0; height: 32px; object-fit: cover; width: 32px;
 }
 #jsd-macro-lib-panel .jsd-ml-panel-info { flex: 1; min-width: 0; }
 #jsd-macro-lib-panel .jsd-ml-panel-name {
-  color: var(--jsd-fg-bright); font-size: 12px; font-weight: 700;
+  color: var(--jsd-fg-primary); font-size: 12px; font-weight: 650;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 #jsd-macro-lib-panel .jsd-ml-panel-desc {
@@ -380,283 +442,145 @@ body.jsd-fix-text-spacing .message-content p:has(br:only-child)::before {
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 #jsd-macro-lib-panel .jsd-ml-panel-run {
-  background: none; border: 1px solid var(--jsd-border-light); border-radius: 5px;
-  color: var(--jsd-accent); cursor: pointer; flex-shrink: 0;
-  font-size: 11px; padding: 4px 7px; transition: all 0.12s;
+  background: none; border: 1px solid var(--jsd-border-accent); border-radius: var(--jsd-radius-sm);
+  color: var(--jsd-accent-text); cursor: pointer; flex-shrink: 0;
+  font-size: 11px; padding: 4px 7px; transition: background 0.12s, border-color 0.12s, color 0.12s;
 }
 #jsd-macro-lib-panel .jsd-ml-panel-run:hover { background: var(--jsd-accent-soft); border-color: var(--jsd-accent); color: var(--jsd-fg-bright); }
 #jsd-macro-lib-panel .jsd-ml-badge {
-  background: var(--jsd-accent-soft); border: 1px solid var(--jsd-border-light);
-  border-radius: 3px; color: var(--jsd-accent); font-size: 9px; font-weight: 800;
-  letter-spacing: 0.5px; margin-left: 5px; padding: 1px 4px;
-  text-transform: uppercase; vertical-align: middle;
+  background: var(--jsd-accent-soft); border: 1px solid var(--jsd-accent);
+  border-radius: 4px; color: var(--jsd-accent-text); font-size: 10px; font-weight: 650;
+  margin-left: 5px; padding: 1px 5px; vertical-align: middle;
 }
 #jsd-macro-lib-panel .jsd-ml-panel-empty {
-  color: var(--jsd-fg-dim); font-size: 12px; padding: 16px 8px; text-align: center; line-height: 1.6;
+  color: var(--jsd-fg-faint); font-size: 12px; padding: 16px 8px; text-align: center; line-height: 1.6;
 }
-#jsd-macro-lib-panel .jsd-ml-panel-footer { border-top: 1px solid var(--jsd-bg-tertiary); padding: 8px; }
+#jsd-macro-lib-panel .jsd-ml-panel-footer { border-top: 1px solid var(--jsd-border); padding: 8px; }
 #jsd-macro-lib-panel .jsd-ml-panel-manage {
-  background: var(--jsd-bg-dark); border: 1px solid var(--jsd-border-light); border-radius: 6px;
-  color: var(--jsd-fg-muted); cursor: pointer; font-size: 11px; font-weight: 700;
-  padding: 5px 10px; transition: all 0.12s; width: 100%;
+  background: var(--jsd-bg-dark); border: 1px solid var(--jsd-border-accent); border-radius: var(--jsd-radius-md);
+  color: var(--jsd-fg-muted); cursor: pointer; font-size: 11px; font-weight: 650;
+  padding: 5px 10px; transition: background 0.12s, border-color 0.12s, color 0.12s; width: 100%;
 }
 #jsd-macro-lib-panel .jsd-ml-panel-manage:hover { background: var(--jsd-bg-tertiary); color: var(--jsd-fg-bright); border-color: var(--jsd-accent); }
 
 /* ── MacroLibrarySettings window ── */
 
 #jsd-mls-root {
-  --jsd-bg-primary:     #1a1410;
-  --jsd-bg-secondary:   #2a2018;
-  --jsd-bg-tertiary:    #3a2a1a;
-  --jsd-bg-dark:        #1a1410;
-  --jsd-fg-primary:     #f5e6d3;
-  --jsd-fg-bright:      #f5d9a8;
-  --jsd-fg-muted:       #c9a876;
-  --jsd-fg-dim:         #7a6040;
-  --jsd-accent:         #d4a574;
-  --jsd-accent-hover:   #e8c090;
-  --jsd-accent-soft:    rgba(212,165,116,0.18);
-  --jsd-border:         #4a3a28;
-  --jsd-border-light:   #6a4a2a;
-  --jsd-error:          #e84030;
-  --jsd-success:        #2ecc71;
-  --jsd-font:           'Segoe UI', Tahoma, sans-serif;
-
-  background: linear-gradient(160deg, var(--jsd-bg-primary) 0%, var(--jsd-bg-secondary) 100%);
+  background: var(--jsd-bg-primary);
   color: var(--jsd-fg-primary); font-family: var(--jsd-font);
   font-size: 13px; padding: 16px;
 }
 #jsd-mls-root .jsd-mls-warn {
-  align-items: center; background: rgba(232,64,48,0.1); border: 1px solid var(--jsd-error);
-  border-radius: 6px; color: var(--jsd-error); display: flex; font-size: 12px; font-weight: 700;
+  align-items: center; background: var(--jsd-error-bg); border: 1px solid var(--jsd-error);
+  border-radius: var(--jsd-radius-md); color: var(--jsd-error); display: flex; font-size: 12px; font-weight: 650;
   gap: 8px; margin-bottom: 12px; padding: 8px 12px;
 }
 #jsd-mls-root .jsd-mls-section-label {
-  align-items: center; color: var(--jsd-accent); display: flex; font-size: 11px;
-  font-weight: 800; gap: 8px; letter-spacing: 1.2px; margin-bottom: 8px;
-  text-transform: uppercase;
+  align-items: center; color: var(--jsd-accent-text); display: flex; font-size: 12px;
+  font-weight: 650; gap: 8px; letter-spacing: -0.2px; margin-bottom: 8px;
 }
 #jsd-mls-root .jsd-mls-count {
-  background: var(--jsd-accent-soft); border: 1px solid var(--jsd-border-light);
-  border-radius: 10px; color: var(--jsd-fg-muted); font-size: 10px; font-weight: 700; padding: 1px 7px;
+  background: var(--jsd-accent-soft); border: 1px solid var(--jsd-border-accent);
+  border-radius: 10px; color: var(--jsd-fg-muted); font-size: 10px; font-weight: 650; padding: 1px 7px;
 }
 #jsd-mls-root .jsd-mls-dropzone {
-  align-items: center; border: 2px dashed var(--jsd-border-light); border-radius: 8px;
-  color: var(--jsd-fg-dim); cursor: pointer; display: flex; flex-direction: column;
+  align-items: center; border: 1px dashed var(--jsd-border-accent); border-radius: var(--jsd-radius-md);
+  color: var(--jsd-fg-faint); cursor: pointer; display: flex; flex-direction: column;
   gap: 5px; justify-content: center; margin-bottom: 18px;
   min-height: 90px; padding: 16px; text-align: center;
   transition: border-color 0.15s, background 0.15s;
 }
-#jsd-mls-root .jsd-mls-dropzone i { font-size: 22px; color: var(--jsd-border-light); }
+#jsd-mls-root .jsd-mls-dropzone i { font-size: 22px; color: var(--jsd-fg-faint); }
 #jsd-mls-root .jsd-mls-dropzone p { color: var(--jsd-fg-muted); font-size: 12px; font-weight: 600; margin: 0; }
-#jsd-mls-root .jsd-mls-dropzone small { color: var(--jsd-fg-dim); font-size: 10px; }
+#jsd-mls-root .jsd-mls-dropzone small { color: var(--jsd-fg-faint); font-size: 11px; }
 #jsd-mls-root .jsd-mls-dropzone.drag-over {
   background: var(--jsd-accent-soft); border-color: var(--jsd-accent);
 }
 #jsd-mls-root .jsd-mls-dropzone.drag-over i,
-#jsd-mls-root .jsd-mls-dropzone.drag-over p { color: var(--jsd-accent); }
+#jsd-mls-root .jsd-mls-dropzone.drag-over p { color: var(--jsd-accent-text); }
 #jsd-mls-root .jsd-mls-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
 #jsd-mls-root .jsd-mls-row {
-  align-items: center; background: rgba(0,0,0,0.15); border: 1px solid var(--jsd-bg-tertiary);
-  border-radius: 6px; display: flex; gap: 10px; padding: 8px 10px;
+  align-items: center; background: var(--jsd-bg-secondary); border: 1px solid var(--jsd-border-secondary);
+  border-radius: var(--jsd-radius-md); display: flex; gap: 10px; padding: 8px 10px;
   transition: border-color 0.12s;
 }
-#jsd-mls-root .jsd-mls-row:hover { border-color: var(--jsd-border-light); }
+#jsd-mls-root .jsd-mls-row:hover { border-color: var(--jsd-border-accent); }
 #jsd-mls-root .jsd-mls-icon {
-  border: 1px solid var(--jsd-border); border-radius: 5px;
+  border: 1px solid var(--jsd-border); border-radius: var(--jsd-radius-sm);
   flex-shrink: 0; height: 36px; object-fit: cover; width: 36px;
 }
 #jsd-mls-root .jsd-mls-info { flex: 1; min-width: 0; }
 #jsd-mls-root .jsd-mls-name {
-  color: var(--jsd-fg-bright); font-size: 13px; font-weight: 700;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap.
+  color: var(--jsd-fg-primary); font-size: 13px; font-weight: 650;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 #jsd-mls-root .jsd-mls-badge {
-  background: var(--jsd-accent-soft); border: 1px solid var(--jsd-border-light); border-radius: 3px;
-  color: var(--jsd-accent); font-size: 9px; font-weight: 800; letter-spacing: 0.5px;
-  margin-left: 5px; padding: 1px 4px; text-transform: uppercase; vertical-align: middle;
+  background: var(--jsd-accent-soft); border: 1px solid var(--jsd-accent); border-radius: 4px;
+  color: var(--jsd-accent-text); font-size: 10px; font-weight: 650;
+  margin-left: 5px; padding: 1px 5px; vertical-align: middle;
 }
 #jsd-mls-root .jsd-mls-desc {
   border-radius: 4px; color: var(--jsd-fg-muted); font-size: 11px; margin-top: 3px;
   min-height: 16px; outline: none; padding: 2px 4px; transition: background 0.12s;
 }
 #jsd-mls-root .jsd-mls-desc:focus {
-  background: var(--jsd-accent-soft); color: var(--jsd-fg-primary); box-shadow: 0 0 0 1px var(--jsd-border-light);
+  background: var(--jsd-accent-soft); color: var(--jsd-fg-primary); box-shadow: 0 0 0 1px var(--jsd-border-accent);
 }
-#jsd-mls-root .jsd-mls-desc .jsd-mls-placeholder { color: var(--jsd-border); font-style: italic; pointer-events: none; }
+#jsd-mls-root .jsd-mls-desc .jsd-mls-placeholder { color: var(--jsd-fg-faint); font-style: italic; pointer-events: none; }
 #jsd-mls-root .jsd-mls-remove {
-  background: none; border: 1px solid transparent; border-radius: 5px;
-  color: var(--jsd-border-light); cursor: pointer; flex-shrink: 0; font-size: 12px;
-  padding: 4px 7px; transition: all 0.12s;
+  background: none; border: 1px solid transparent; border-radius: var(--jsd-radius-sm);
+  color: var(--jsd-fg-faint); cursor: pointer; flex-shrink: 0; font-size: 12px;
+  padding: 4px 7px; transition: background 0.12s, border-color 0.12s, color 0.12s;
 }
-#jsd-mls-root .jsd-mls-remove:hover { background: rgba(232,64,48,0.12); border-color: var(--jsd-error); color: var(--jsd-error); }
+#jsd-mls-root .jsd-mls-remove:hover { background: var(--jsd-error-bg); border-color: var(--jsd-error); color: var(--jsd-error); }
 #jsd-mls-root .jsd-mls-empty {
-  border: 1px dashed var(--jsd-border); border-radius: 6px; color: var(--jsd-fg-dim);
+  border: 1px dashed var(--jsd-border); border-radius: var(--jsd-radius-md); color: var(--jsd-fg-faint);
   font-size: 12px; padding: 20px; text-align: center; line-height: 1.7;
 }
-#jsd-mls-root .jsd-mls-empty i { display: block; font-size: 22px; margin-bottom: 6px; color: var(--jsd-border); }
+#jsd-mls-root .jsd-mls-empty i { display: block; font-size: 22px; margin-bottom: 6px; color: var(--jsd-fg-faint); }
 #jsd-mls-root .jsd-mls-footer-note {
-  border-top: 1px solid var(--jsd-bg-tertiary); color: var(--jsd-fg-dim); font-size: 11px;
+  border-top: 1px solid var(--jsd-border); color: var(--jsd-fg-faint); font-size: 11px;
   line-height: 1.5; padding-top: 10px;
 }
-#jsd-mls-root .jsd-mls-footer-note i { color: var(--jsd-border-light); margin-right: 4px; }
+#jsd-mls-root .jsd-mls-footer-note i { color: var(--jsd-fg-faint); margin-right: 4px; }
 #jsd-mls-root .jsd-mls-footer-note code {
-  background: var(--jsd-bg-secondary); border: 1px solid var(--jsd-border); border-radius: 3px;
+  background: var(--jsd-bg-secondary); border: 1px solid var(--jsd-border); border-radius: 4px;
   color: var(--jsd-fg-muted); font-size: 10px; padding: 1px 4px;
-}
-
-/* ═══════════════════════════════════════════════
-   v1.7.0 additions
-   ═══════════════════════════════════════════════ */
-
-/* JSD sidebar icon — amber (V14 scene controls DOM) */
-/* V14 structure: #scene-controls .main-controls button.scene-control[data-control="jsd"] i */
-#scene-controls button.scene-control[data-control="jsd"] i,
-#scene-controls .scene-control[data-control="jsd"] i,
-#scene-controls [data-control="jsd"] > button > i {
-  color: #d4a574 !important;
-  text-shadow: 0 0 8px rgba(212,165,116,0.35) !important;
-}
-#scene-controls .scene-control[data-control="jsd"].active i,
-#scene-controls button.scene-control[data-control="jsd"].active i {
-  color: #f5d9a8 !important;
 }
 
 /* MacroLibrarySettings — export / import / reset section */
 #jsd-mls-root .jsd-mls-section-export { margin-top: 14px; }
 #jsd-mls-root .jsd-mls-hint-inline {
-  color: #7a6040; font-size: 10px; font-weight: 400;
-  letter-spacing: 0; margin-left: 6px; text-transform: none;
+  color: var(--jsd-fg-faint); font-size: 11px; font-weight: 400;
+  letter-spacing: 0; margin-left: 6px;
 }
 #jsd-mls-root .jsd-mls-export-row {
   display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;
 }
 #jsd-mls-root .jsd-mls-action-btn {
-  flex: 1; border-radius: 7px; border: 1px solid #6a4a2a;
-  cursor: pointer; font-size: 11px; font-weight: 700;
-  min-width: 120px; padding: 7px 10px; text-align: center; transition: all 0.12s;
+  flex: 1; border-radius: var(--jsd-radius-md); border: 1px solid var(--jsd-border-accent);
+  cursor: pointer; font-size: 11px; font-weight: 650;
+  min-width: 120px; padding: 7px 10px; text-align: center;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
 }
 #jsd-mls-root .jsd-mls-export-btn,
 #jsd-mls-root .jsd-mls-import-btn {
-  background: #2a2018; color: #c9a876;
+  background: var(--jsd-bg-secondary); color: var(--jsd-fg-muted);
 }
 #jsd-mls-root .jsd-mls-export-btn:hover,
 #jsd-mls-root .jsd-mls-import-btn:hover {
-  background: #3a2a1a; border-color: #d4a574; color: #f5d9a8;
+  background: var(--jsd-bg-tertiary); border-color: var(--jsd-accent); color: var(--jsd-fg-bright);
 }
 #jsd-mls-root .jsd-mls-reset-btn {
-  background: rgba(232,64,48,0.08); border-color: #6a2a2a; color: #e87060;
+  background: var(--jsd-error-bg); border-color: var(--jsd-btn-danger-bg); color: var(--jsd-error);
 }
 #jsd-mls-root .jsd-mls-reset-btn:hover {
-  background: rgba(232,64,48,0.18); border-color: #e84030; color: #ff9080;
+  background: var(--jsd-btn-danger-bg); border-color: var(--jsd-error); color: var(--jsd-fg-bright);
 }
 
-/* ═══════════════════════════════════════════════
-   v1.7.2 — DarknessPanel extra controls
-   (Token Vision / Global Light / Fog Exploration)
-   ═══════════════════════════════════════════════ */
-
-/* Extra controls block — sits below the darkness bar */
-#jsd-darkness-panel .jsd-extra-controls {
-  border-top: 1px solid #3a2a1a;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-top: 6px;
-  padding: 8px 14px 4px;
-}
-
-/* Each control row: label on the left, control on the right */
-#jsd-darkness-panel .jsd-extra-row {
-  align-items: center;
-  display: flex;
-  gap: 8px;
-}
-#jsd-darkness-panel .jsd-extra-label {
-  color: #c9a876;
-  flex: 1;
-  font-size: 11px;
-  user-select: none;
-}
-
-/* ── Toggle switch ────────────────────────────────────── */
-#jsd-darkness-panel .jsd-toggle {
-  align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-shrink: 0;
-  gap: 5px;
-  padding: 0;
-}
-#jsd-darkness-panel .jsd-toggle-track {
-  background: #3a2a1a;
-  border: 1px solid #5a3a20;
-  border-radius: 9px;
-  flex-shrink: 0;
-  height: 18px;
-  position: relative;
-  transition: background 0.18s, border-color 0.18s;
-  width: 32px;
-}
-#jsd-darkness-panel .jsd-toggle.on .jsd-toggle-track {
-  background: #d4a574;
-  border-color: #e8c090;
-}
-#jsd-darkness-panel .jsd-toggle-thumb {
-  background: #c9a876;
-  border-radius: 50%;
-  height: 12px;
-  left: 2px;
-  pointer-events: none;
-  position: absolute;
-  top: 2px;
-  transition: left 0.18s, background 0.18s;
-  width: 12px;
-}
-#jsd-darkness-panel .jsd-toggle.on .jsd-toggle-thumb {
-  background: #1a1410;
-  left: 16px;
-}
-#jsd-darkness-panel .jsd-toggle-state {
-  color: #6a4a2a;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  min-width: 22px;
-  text-align: left;
-  transition: color 0.18s;
-}
-#jsd-darkness-panel .jsd-toggle.on .jsd-toggle-state {
-  color: #d4a574;
-}
-/* Hover feedback */
-#jsd-darkness-panel .jsd-toggle:hover .jsd-toggle-track {
-  border-color: #d4a574;
-}
-#jsd-darkness-panel .jsd-toggle:not(.on):hover .jsd-toggle-state {
-  color: #c9a876;
-}
-
-/* ── Fog Exploration dropdown ─────────────────────────── */
-#jsd-darkness-panel .jsd-fog-select {
-  background: #2a2018;
-  border: 1px solid #4a3a28;
-  border-radius: 5px;
-  color: #f5e6d3;
-  cursor: pointer;
-  flex: 1;
-  font-size: 11px;
-  padding: 3px 6px;
-  transition: border-color 0.15s;
-}
-#jsd-darkness-panel .jsd-fog-select:hover { border-color: #6a4a2a; }
-#jsd-darkness-panel .jsd-fog-select:focus { border-color: #d4a574; outline: none; }
-#jsd-darkness-panel .jsd-fog-select option {
-  background: #2a2018;
-  color: #f5e6d3;
-}
+/* JSD sidebar icon (Scene Controls). In V14 the control button IS the FA icon
+   (::before), there is no child <i>; the accent colour is injected by
+   macro-library.mjs (_ACCENT_ICON_CSS), since this button belongs to core UI. */
 
 /* ── File Picker — folder-only filter (file-picker-folder-filter.mjs) ──
    Prefixed with the picker's own id (#file-picker, confirmed app id). The
@@ -695,11 +619,11 @@ body.jsd-fix-text-spacing .message-content p:has(br:only-child)::before {
 }
 
 .window-header .jsd-fpsd-toggle.jsd-fpsd-on {
-  color: #2ecc71 !important;
+  color: #6fcf97 !important;
 }
 
 [data-tool="jsd-fp-space-display"].jsd-fpsd-on i {
-  color: #2ecc71;
+  color: #6fcf97;
 }
 
 /* Path-input display overlay: the real input text is hidden and this span

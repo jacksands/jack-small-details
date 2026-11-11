@@ -37,7 +37,7 @@ const FEATURE_TAG     = "broadcast";
 const SETTING_ENABLED = "broadcast.enabled";
 const SETTING_ACCEPT  = "broadcast.acceptFrom";
 const MAX_CHARS       = 400_000;
-const BCAST_ICON_COLOR = "#e8a030"; // header icon color (Amber "warning" orange)
+const BCAST_ICON_COLOR = "#e6b450"; // header icon colour (Modern "warning" amber)
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
