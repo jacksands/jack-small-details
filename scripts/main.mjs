@@ -49,10 +49,15 @@ const MODULE = "jack-small-details";
 function safeCall(Feature, methodName, ...args) {
   const fn = Feature[methodName];
   if (typeof fn !== "function") return;
+  const label = Feature.settingsGroup?.label ?? "(unnamed feature)";
+  const report = (err) => console.error(`Jack Small Details | ${label}.${methodName}() failed:`, err);
   try {
-    fn.apply(Feature, args);
+    // Async lifecycle methods (e.g. MacroLibrary.initialize) return a Promise:
+    // a rejection would bypass the try/catch, so it is caught here as well.
+    const result = fn.apply(Feature, args);
+    if (result && typeof result.catch === "function") result.catch(report);
   } catch (err) {
-    console.error(`Jack Small Details | ${Feature.settingsGroup?.label ?? "(unnamed feature)"}.${methodName}() failed:`, err);
+    report(err);
   }
 }
 

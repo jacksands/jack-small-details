@@ -1,15 +1,12 @@
 /**
- * macro-library.mjs  —  v1.7.2
+ * macro-library.mjs
  *
- * Correção: auto-sync entre compendium e as UIs do módulo.
+ * JSD Panel scene-control group, Macro Library compendium (seed, migration
+ * from the legacy world pack) and auto-sync of the open Macro Library UIs.
  *
- * Problema: alterações feitas diretamente no compendium do Foundry
- * (ou via settings manager) não apareciam nas outras janelas abertas.
- *
- * Solução: hooks createMacro / updateMacro / deleteMacro com debounce.
- * Quando qualquer macro do compendium JSD é criada, editada ou removida
- * (independente de quem fez a mudança), as instâncias abertas do
- * MacroLibraryPanel e MacroLibrarySettings se atualizam automaticamente.
+ * Auto-sync: createMacro / updateMacro / deleteMacro hooks (debounced) refresh
+ * the open MacroLibraryPanel and MacroLibrarySettings whenever a macro of the
+ * JSD compendium changes, no matter who changed it.
  */
 
 import { DarknessPanel        } from "../apps/DarknessPanel.mjs";
